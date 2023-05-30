@@ -44,9 +44,11 @@ const PokemonList: React.FC<PokemonType> = () => {
   return (
     <div>
       <h1>Pokemon List</h1>
-      {pokemonList.map((pokemon) => (
-        <PokemonCard pokemon={pokemon} key={pokemon.id} />
-      ))}
+      <div className="m-10 flex flex-wrap justify-center">
+        {pokemonList.map((pokemon) => (
+          <PokemonCard pokemon={pokemon} key={pokemon.id} />
+        ))}
+      </div>
     </div>
   );
 };

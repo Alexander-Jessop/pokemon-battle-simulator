@@ -11,13 +11,33 @@ const PokemonCard: React.FC<Props> = ({ pokemon }) => {
   }
 
   return (
-    <div
-      className={
-        "m-4 flex flex-col items-center rounded-lg border border-gray-300 p-4"
-      }
-    >
-      <h3>{pokemon.name}</h3>
-      <img src={pokemon.sprite} alt={pokemon.name} />
+    <div className={" m-4 overflow-hidden rounded-lg bg-white shadow-lg"}>
+      <h3 className="bg-accent-500 p-4 text-xl font-bold text-white">
+        {pokemon.name}
+      </h3>
+      <div className="flex justify-center">
+        <img
+          className="m-4 h-32 w-32"
+          src={pokemon.sprite}
+          alt={pokemon.name}
+        />
+      </div>
+      <div>
+        <button
+          className={
+            "rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          }
+        >
+          Select
+        </button>
+        <button
+          className={
+            "rounded bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
+          }
+        >
+          Pokedex
+        </button>
+      </div>
     </div>
   );
 };
