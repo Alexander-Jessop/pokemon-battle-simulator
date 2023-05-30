@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+import { PokemonType } from "../types/PokemonType";
 import PokemonCard from "./PokemonCard";
 
 const POKEMON_LIST_API = import.meta.env.VITE_POKEMON_LIST_API?.toString();
 
-interface Pokemon {
-  id: number;
-  name: string;
-  sprite: string;
-}
-
-const PokemonList: React.FC<Pokemon> = () => {
-  const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
+const PokemonList: React.FC<PokemonType> = () => {
+  const [pokemonList, setPokemonList] = useState<PokemonType[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [retryCount, setRetryCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchPokemonList = async () => {
       try {
-        const response = await axios.get<Pokemon[]>(POKEMON_LIST_API);
+        const response = await axios.get<PokemonType[]>(POKEMON_LIST_API);
         setPokemonList(response.data);
+        setLoading(false);
       } catch (error) {
         setError("Failed to fetch Pokemon list.");
+        setLoading(false);
         if (retryCount < 3) {
           setRetryCount(retryCount + 1);
           setTimeout(() => {
@@ -35,10 +33,17 @@ const PokemonList: React.FC<Pokemon> = () => {
     fetchPokemonList();
   }, [retryCount]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div>
       <h1>Pokemon List</h1>
-      {error && <p>{error}</p>}
       {pokemonList.map((pokemon) => (
         <PokemonCard pokemon={pokemon} key={pokemon.id} />
       ))}
