@@ -1,0 +1,50 @@
+module.exports = {
+  env: {
+    browser: true,
+    es2020: true,
+    jest: true,
+    node: true,
+  },
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:tailwindcss/recommended",
+    "prettier",
+  ],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    ecmaVersion: "latest",
+    project: "tsconfig.json",
+    tsconfigRootDir: __dirname,
+    sourceType: "module",
+  },
+  plugins: [
+    "react",
+    "react-refresh",
+    "@typescript-eslint",
+    "prettier",
+    "tailwindcss",
+    "jest",
+  ],
+  rules: {
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    "max-len": ["error", { code: 80 }],
+    "react-refresh/only-export-components": "warn",
+    "no-console": "error",
+    "no-unused-vars": "error",
+    "no-undef": "error",
+    semi: ["error", "always"],
+    indent: ["error", 2],
+    "no-trailing-spaces": "error",
+    "no-multiple-empty-lines": ["error", { max: 1 }],
+    "no-var": "error",
+  },
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
+};
