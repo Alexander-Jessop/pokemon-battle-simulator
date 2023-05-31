@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-import { PokemonType } from "../types/PokemonType";
+import { PokemonType } from "../../types/PokemonType";
 import PokemonCard from "./PokemonCard";
 
 const POKEMON_LIST_API = import.meta.env.VITE_POKEMON_LIST_API?.toString();
 
-const PokemonList: React.FC<PokemonType> = () => {
+const PokemonList: React.FC = () => {
   const [pokemonList, setPokemonList] = useState<PokemonType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

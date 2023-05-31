@@ -1,7 +1,5 @@
 import React from "react";
-import { PokemonType } from "../types/PokemonType";
-import { NavButton } from "../buttons";
-
+import { PokemonType } from "../../types/PokemonType";
 interface Props {
   pokemon?: PokemonType;
 }

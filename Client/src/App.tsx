@@ -1,12 +1,18 @@
 import React from "react";
-import PokemonList from "./components/pokemon/PokemonList";
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes } from "react-router-dom";
 
-function App(): JSX.Element {
+import NavBar from "./components/NavBar";
+import LandingPage from "./pages/LandingPage";
+import PokemonList from "./components/pokemon/PokemonList";
+
+function App(): React.JSX.Element {
   return (
-    <Routes>
-      <Route path="/pokemon-selection" element={<PokemonList />} />
-    </Routes>
+    <NavBar>
+      <Routes>
+        <Route path="/pokemon-selection" element={<PokemonList />} />
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
+    </NavBar>
   );
 }
 

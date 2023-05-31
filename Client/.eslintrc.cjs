@@ -42,6 +42,8 @@ module.exports = {
     "no-multiple-empty-lines": ["error", { max: 1 }],
     "no-var": "error",
     "tailwindcss/no-custom-classname": "off",
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
   },
   settings: {
     react: {
