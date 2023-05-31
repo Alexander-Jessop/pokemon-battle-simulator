@@ -1,12 +1,15 @@
 import axios, { AxiosResponse } from "axios";
 import { PokemonType } from "../types/PokemonType";
 
-const POKEMON_LIST_API = import.meta.env.VITE_POKEMON_LIST_API as string;
+const POKEMON_LIST_API: string = import.meta.env.VITE_POKEMON_LIST_API;
 
-export const fetchPokemonList = async (): Promise<PokemonType[]> => {
+export const fetchPokemonList = async (
+  offset: number,
+  limit: number
+): Promise<PokemonType[]> => {
   try {
     const response: AxiosResponse<PokemonType[]> = await axios.get(
-      POKEMON_LIST_API
+      `${POKEMON_LIST_API}?offset=${offset}&limit=${limit}`
     );
     return response.data;
   } catch (error) {

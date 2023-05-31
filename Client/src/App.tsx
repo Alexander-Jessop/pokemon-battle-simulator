@@ -3,13 +3,13 @@ import { Route, Routes } from "react-router-dom";
 
 import NavBar from "./components/NavBar";
 import LandingPage from "./pages/LandingPage";
-import PokemonList from "./components/pokemon/PokemonList";
+import SelectPokemonPage from "./pages/SelectPokemonPage";
 
 function App(): React.JSX.Element {
   return (
     <NavBar>
       <Routes>
-        <Route path="/pokemon-selection" element={<PokemonList />} />
+        <Route path="/pokemon-selection" element={<SelectPokemonPage />} />
         <Route path="/" element={<LandingPage />} />
       </Routes>
     </NavBar>

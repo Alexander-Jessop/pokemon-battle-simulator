@@ -25,10 +25,19 @@ interface PokemonListResponse {
 
 export const getPokemon = async (req: Request, res: Response) => {
   try {
-    const { offset = 0, limit = 10 } = req.query;
+    let offset = 0;
+    let limit = 20;
 
-    const { data } = await axios.get<PokemonListResponse>(
-      process.env.POKEMON_API!,
+    if (req.query.offset) {
+      offset = parseInt(req.query.offset as string, 10);
+    }
+
+    if (req.query.limit) {
+      limit = parseInt(req.query.limit as string, 10);
+    }
+
+    const response = await axios.get<PokemonListResponse>(
+      process.env.POKEMON_API as string,
       {
         params: {
           offset,
@@ -38,7 +47,7 @@ export const getPokemon = async (req: Request, res: Response) => {
     );
 
     const pokemonData = await Promise.all(
-      data.results.map(async (pokemon) => {
+      response.data.results.map(async (pokemon) => {
         const { data } = await axios.get<Pokemon>(pokemon.url);
 
         return {
@@ -51,7 +60,7 @@ export const getPokemon = async (req: Request, res: Response) => {
 
     res.status(200).json(pokemonData);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };

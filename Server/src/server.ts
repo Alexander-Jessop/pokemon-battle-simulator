@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import dotenv from "dotenv";
 
 import pokemonRouter from "./routes/pokemonRoutes.js";
@@ -6,12 +6,12 @@ import connectToDatabase from "./dB/db-connection.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8080;
 const app = express();
 
 app.use(express.json());
 
-app.get("/", (_req: Request, res: Response) => {
+app.get("/", (_req, res) => {
   res.send("Send React app here");
 });
 
