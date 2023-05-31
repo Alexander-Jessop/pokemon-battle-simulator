@@ -41,6 +41,7 @@ module.exports = {
     "no-trailing-spaces": "error",
     "no-multiple-empty-lines": ["error", { max: 1 }],
     "no-var": "error",
+    "tailwindcss/no-custom-classname": "off",
   },
   settings: {
     react: {

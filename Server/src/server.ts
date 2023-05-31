@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
-import pokemonRouter from "./routes/pokemonRoutes.js";
 import dotenv from "dotenv";
+
+import pokemonRouter from "./routes/pokemonRoutes.js";
+import connectToDatabase from "./dB/db-connection.js";
 
 dotenv.config();
 
@@ -16,3 +18,5 @@ app.use("/api", pokemonRouter);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+connectToDatabase();
