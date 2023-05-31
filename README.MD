@@ -1,10 +1,10 @@
-<h1 style="text-align: center;">Pokemon Battle Simulator</h1>
+<h1 align="center">Pokemon Battle Simulator</h1>
 
 <p align="right">
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" alt="Version Badge">
 </p>
 
-<h2 style="text-align: center;"> 🚧 Under Construction! Please Excuse the Dust! 🚧 </h2>
+<h2 align="center"> 🚧 Under Construction! Please Excuse the Dust! 🚧 </h2>
 
 ## Table of Contents
 
