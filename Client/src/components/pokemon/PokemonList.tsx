@@ -3,11 +3,13 @@ import { useQuery } from "react-query";
 import { fetchPokemonList } from "../../util/fetchPokemonList";
 import PokemonCard from "./PokemonCard";
 import { PokemonType } from "../../types/PokemonType";
+import { useNavigate } from "react-router-dom";
 
 const PokemonList: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState<PokemonType[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const [limit, setLimit] = useState<number>(20);
+  const navigate = useNavigate();
 
   const {
     data: pokemonList,
@@ -61,6 +63,10 @@ const PokemonList: React.FC = () => {
     }
   };
 
+  const handleReadyToBattle = () => {
+    navigate("/battle");
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -80,6 +86,8 @@ const PokemonList: React.FC = () => {
     )
     ?.slice(0, limit);
 
+  const isReadyToBattle = selectedTeam.length === 6;
+
   return (
     <div>
       <div className="flex flex-wrap">
@@ -93,6 +101,11 @@ const PokemonList: React.FC = () => {
             />
           </div>
         ))}
+        {isReadyToBattle && (
+          <div>
+            <button onClick={handleReadyToBattle}>Ready to Battle</button>
+          </div>
+        )}
       </div>
       <h1>Pokemon List</h1>
       <div className="m-10 flex flex-wrap justify-center">

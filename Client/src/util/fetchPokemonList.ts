@@ -11,6 +11,7 @@ export const fetchPokemonList = async (
     const response: AxiosResponse<PokemonType[]> = await axios.get(
       `${POKEMON_LIST_API}?offset=${offset}&limit=${limit}`
     );
+    console.log("response.data", response.data);
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch Pokemon list.");

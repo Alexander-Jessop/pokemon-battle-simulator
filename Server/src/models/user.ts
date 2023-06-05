@@ -3,9 +3,8 @@ import mongoose, { Document, Schema } from "mongoose";
 interface User extends Document {
   name: string;
   email: string;
-  favorites: {
-    items: string[];
-  };
+  favorites: string[] | null;
+  selectedPokemon: string[] | null;
   visits: number;
   battlesPlayed: number;
   movesUsed: number;
@@ -23,7 +22,12 @@ const userSchema = new Schema<User>({
     required: true,
   },
   favorites: {
-    items: [String],
+    type: [String],
+    default: null,
+  },
+  selectedPokemon: {
+    type: [String],
+    default: null,
   },
   visits: {
     type: Number,
