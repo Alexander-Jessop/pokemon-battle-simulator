@@ -1,36 +1,25 @@
-import React, { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import NavBarDiamond from "./Buttons/NavBarDiamond";
 
-interface NavItem {
-  id: number;
-  title: string;
-  path: string;
-}
-
-const navItems: NavItem[] = [
-  { id: 1, title: "HOME", path: "/" },
-  { id: 2, title: "CHOOSE YOUR POKEMON", path: "/pokemon-selection" },
-
-  //   { id: , title: "ABOUT", path: "/about" },
-  //   { id: , title: "CONTACT", path: "/contact" },
+const routes = [
+  { path: "/", name: "Landing Page" },
+  { path: "/pokemon-selection", name: "Select Pokemon" },
+  { path: "/battle", name: "Battle Simulator" },
 ];
 
-interface NavBarProps {
-  children: ReactNode;
-}
-
-const NavBar: React.FC<NavBarProps> = ({ children }) => {
+const NavBar = () => {
   return (
-    <nav>
-      <ul>
-        {navItems.map((item) => (
-          <li key={item.id}>
-            <Link to={item.path}>{item.title}</Link>
-          </li>
-        ))}
-      </ul>
-      {children}
-    </nav>
+    <div className="bg-gray-500">
+      <nav>
+        <ul className="flex space-x-4">
+          {routes.map((route, index) => (
+            <li key={index}>
+              <NavBarDiamond path={route.path} name={route.name} />
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
   );
 };
 

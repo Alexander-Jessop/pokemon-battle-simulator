@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useQuery } from "react-query";
 import { fetchPokemonList } from "../../util/fetchPokemonList";
 import PokemonCard from "./PokemonCard";
 import { PokemonType } from "../../types/PokemonType";
 import { useNavigate } from "react-router-dom";
+import { SelectedTeamContext } from "./SelectedTeamContext";
 
 const PokemonList: React.FC = () => {
-  const [selectedTeam, setSelectedTeam] = useState<PokemonType[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const [limit, setLimit] = useState<number>(20);
   const navigate = useNavigate();
+
+  const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
 
   const {
     data: pokemonList,
@@ -21,7 +23,8 @@ const PokemonList: React.FC = () => {
   );
 
   const handlePaginationChange = (newOffset: number, newLimit: number) => {
-    if (newOffset >= 0 && newOffset <= 151) {
+    const maxOffset = 151;
+    if (newOffset >= 0 && newOffset <= maxOffset) {
       setOffset(newOffset);
       if (newLimit < limit) {
         const selectedPokemonIds = new Set(
@@ -38,7 +41,8 @@ const PokemonList: React.FC = () => {
   };
 
   const handlePokemonSelect = (pokemon: PokemonType) => {
-    if (selectedTeam.length < 6) {
+    const maxSelectedPokemon = 6;
+    if (selectedTeam.length < maxSelectedPokemon) {
       setSelectedTeam((prevSelectedTeam) => [...prevSelectedTeam, pokemon]);
     }
   };
@@ -57,7 +61,8 @@ const PokemonList: React.FC = () => {
     ) {
       handleRemoveFromSelectedTeam(pokemon);
     } else {
-      if (selectedTeam.length < 6) {
+      const maxSelectedPokemon = 6;
+      if (selectedTeam.length < maxSelectedPokemon) {
         handlePokemonSelect(pokemon);
       }
     }
@@ -67,30 +72,9 @@ const PokemonList: React.FC = () => {
     navigate("/battle");
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
+  const renderSelectedPokemon = () => {
     return (
-      <div>Error: {error?.message ?? "Failed to fetch Pokemon list."}</div>
-    );
-  }
-
-  const filteredPokemonList = pokemonList
-    ?.filter(
-      (pokemon) =>
-        !selectedTeam.some(
-          (selectedPokemon) => selectedPokemon.id === pokemon.id
-        )
-    )
-    ?.slice(0, limit);
-
-  const isReadyToBattle = selectedTeam.length === 6;
-
-  return (
-    <div>
-      <div className="flex flex-wrap">
+      <>
         <h2>Selected Pokemon:</h2>
         {selectedTeam.map((pokemon) => (
           <div key={pokemon.id}>
@@ -101,25 +85,51 @@ const PokemonList: React.FC = () => {
             />
           </div>
         ))}
-        {isReadyToBattle && (
+        {isReadyToBattle() && (
           <div>
             <button onClick={handleReadyToBattle}>Ready to Battle</button>
           </div>
         )}
-      </div>
-      <h1>Pokemon List</h1>
-      <div className="m-10 flex flex-wrap justify-center">
-        {filteredPokemonList?.map((pokemon) => (
-          <PokemonCard
-            pokemon={pokemon}
-            key={pokemon.id}
-            onSelect={() => handleSelectOrRemove(pokemon)}
-            isSelected={selectedTeam.some(
-              (selectedPokemon) => selectedPokemon.id === pokemon.id
-            )}
-          />
-        ))}
-      </div>
+      </>
+    );
+  };
+
+  const isReadyToBattle = () => {
+    const maxSelectedPokemon = 6;
+    return selectedTeam.length === maxSelectedPokemon;
+  };
+
+  const renderPokemonList = () => {
+    const filteredPokemonList = pokemonList
+      ?.filter(
+        (pokemon) =>
+          !selectedTeam.some(
+            (selectedPokemon) => selectedPokemon.id === pokemon.id
+          )
+      )
+      ?.slice(0, limit);
+
+    return (
+      <>
+        <h1>Pokemon List</h1>
+        <div className="m-10 flex flex-wrap justify-center">
+          {filteredPokemonList?.map((pokemon) => (
+            <PokemonCard
+              pokemon={pokemon}
+              key={pokemon.id}
+              onSelect={() => handleSelectOrRemove(pokemon)}
+              isSelected={selectedTeam.some(
+                (selectedPokemon) => selectedPokemon.id === pokemon.id
+              )}
+            />
+          ))}
+        </div>
+      </>
+    );
+  };
+
+  const renderPagination = () => {
+    return (
       <div>
         <button onClick={() => handlePaginationChange(offset - limit, limit)}>
           Previous
@@ -138,6 +148,24 @@ const PokemonList: React.FC = () => {
           <option value={50}>50</option>
         </select>
       </div>
+    );
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div>Error: {error?.message ?? "Failed to fetch Pokemon list."}</div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex flex-wrap">{renderSelectedPokemon()}</div>
+      {renderPokemonList()}
+      {renderPagination()}
     </div>
   );
 };

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
 import { useQuery } from "react-query";
 import { fetchPokemonList } from "../util/fetchPokemonList";
 import { PokemonType } from "../types/PokemonType";
-import axios from "axios";
+import { SelectedTeamContext } from "./pokemon/SelectedTeamContext";
 
 const BattleSimulator = () => {
   const { isLoading, error, data } = useQuery<PokemonType[], Error>(
@@ -11,6 +12,8 @@ const BattleSimulator = () => {
   );
   const [computerPokemon, setComputerPokemon] = useState<PokemonType[]>([]);
   const [releasedPokemon, setReleasedPokemon] = useState<number[]>([]);
+  const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
+  const [pokemonData, setPokemonData] = useState<any>(null);
 
   const selectRandomPokemon = (pokemonList: PokemonType[]) => {
     const randomPokemon: PokemonType[] = [];
@@ -29,21 +32,6 @@ const BattleSimulator = () => {
       const randomPokemon = selectRandomPokemon(data);
       setComputerPokemon(randomPokemon);
       setReleasedPokemon([0]);
-
-      // Fetch Pokemon information for the first Pokemon
-      const fetchPokemonInformation = async () => {
-        const firstPokemon = randomPokemon[0];
-        const response = await axios.get(
-          import.meta.env.VITE_POKEMON_BATTLEING_API + firstPokemon.name
-        );
-        const { sprites, types, moves } = response.data;
-
-        console.log("Sprites:", sprites);
-        console.log("Types:", types);
-        console.log("Moves:", moves);
-      };
-
-      fetchPokemonInformation();
     }
   }, [data]);
 
@@ -55,6 +43,30 @@ const BattleSimulator = () => {
       ]);
     }
   };
+
+  const switchPokemon = (index: number) => {
+    const selectedPokemon = selectedTeam[0];
+    const reservedPokemon = selectedTeam[index];
+    const updatedTeam = [...selectedTeam];
+    updatedTeam[0] = reservedPokemon;
+    updatedTeam[index] = selectedPokemon;
+    setSelectedTeam(updatedTeam);
+  };
+
+  useEffect(() => {
+    if (selectedTeam.length > 0) {
+      axios
+        .get(
+          `${import.meta.env.VITE_POKEMON_BATTLEING_API}${selectedTeam[0].id}`
+        )
+        .then((response) => {
+          setPokemonData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching Pokemon data:", error);
+        });
+    }
+  }, [selectedTeam]);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -77,6 +89,48 @@ const BattleSimulator = () => {
           );
         })}
       </ul>
+
+      <div>
+        <h2>Selected Pokemon:</h2>
+        {selectedTeam.length > 0 ? (
+          <div>
+            <p>{selectedTeam[0].name}</p>
+            {pokemonData && (
+              <div>
+                <p>
+                  Sprites:{" "}
+                  <img src={pokemonData.sprites} alt="Pokemon Sprite" />
+                </p>
+                <p>
+                  Types:{" "}
+                  {pokemonData.types.map((type: any) => (
+                    <span key={type.type.name}>{type.type.name} </span>
+                  ))}
+                </p>
+                <p>
+                  Moves:{" "}
+                  {pokemonData.moves.map((move: any) => (
+                    <span key={move.name}>{move.name}, </span>
+                  ))}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p>None</p>
+        )}
+      </div>
+      <div>
+        <h2>Reserved Pokemon:</h2>
+        <ul>
+          {selectedTeam.slice(1).map((pokemon, index) => (
+            <li key={pokemon.id}>
+              {pokemon.name}
+              <button onClick={() => switchPokemon(index + 1)}>Switch</button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

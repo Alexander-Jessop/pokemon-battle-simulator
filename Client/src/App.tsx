@@ -8,13 +8,14 @@ import BattleSimulator from "./components/BattleSimulator";
 
 function App(): React.JSX.Element {
   return (
-    <NavBar>
+    <>
+      <NavBar />
       <Routes>
         <Route path="/pokemon-selection" element={<SelectPokemonPage />} />
         <Route path="/battle" element={<BattleSimulator />} />
         <Route path="/" element={<LandingPage />} />
       </Routes>
-    </NavBar>
+    </>
   );
 }
 
