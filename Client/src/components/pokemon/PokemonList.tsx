@@ -7,7 +7,8 @@ import { usePagination } from "../../hooks/usePagination";
 
 const PokemonList = () => {
   const { selectedTeam, handleSelectOrRemove } = useSelectedTeam();
-  const { offset, limit, handlePaginationChange } = usePagination(0, 20, 151);
+  const { offset, limit, totalPages, currentPage, handlePaginationChange } =
+    usePagination(0, 20, 151, 151);
 
   const {
     data: pokemonList,
@@ -30,7 +31,7 @@ const PokemonList = () => {
 
     return (
       <>
-        <h1>Pokemon List</h1>
+        <h1>Choose Your Pokemon:</h1>
         <div className="m-10 flex flex-wrap justify-center">
           {filteredPokemonList?.map((pokemon: PokemonType) => (
             <PokemonCard
@@ -49,13 +50,7 @@ const PokemonList = () => {
   };
 
   const renderPagination = () => (
-    <div>
-      <button onClick={() => handlePaginationChange(offset - limit, limit)}>
-        Previous
-      </button>
-      <button onClick={() => handlePaginationChange(offset + limit, limit)}>
-        Next
-      </button>
+    <div className="flex justify-center">
       <select
         value={limit}
         onChange={(e) =>
@@ -66,6 +61,30 @@ const PokemonList = () => {
         <option value={20}>20</option>
         <option value={50}>50</option>
       </select>
+      <div className="mr-5">Page: {currentPage}</div>
+      <button
+        onClick={() => handlePaginationChange(offset - limit, limit)}
+        className="mr-3"
+      >
+        Previous
+      </button>
+
+      {Array.from({ length: totalPages }, (_, index) => (
+        <button
+          key={index}
+          onClick={() => handlePaginationChange(index * limit, limit)}
+          className="mr-3"
+        >
+          {index + 1}
+        </button>
+      ))}
+      <button
+        onClick={() => handlePaginationChange(offset + limit, limit)}
+        className="mr-5"
+      >
+        Next
+      </button>
+      <div>Total Pages: {totalPages}</div>
     </div>
   );
 

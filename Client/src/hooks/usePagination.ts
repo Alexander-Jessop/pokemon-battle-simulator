@@ -5,11 +5,15 @@ import { PokemonType } from "../types/PokemonType";
 export const usePagination = (
   initialOffset: number,
   initialLimit: number,
-  maxOffset: number
+  maxOffset: number,
+  totalItems: number
 ) => {
   const [offset, setOffset] = useState<number>(initialOffset);
   const [limit, setLimit] = useState<number>(initialLimit);
   const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
+
+  const totalPages = Math.ceil(totalItems / limit);
+  const currentPage = Math.floor(offset / limit) + 1;
 
   const handlePaginationChange = (newOffset: number, newLimit: number) => {
     if (newOffset >= 0 && newOffset <= maxOffset) {
@@ -31,6 +35,8 @@ export const usePagination = (
   return {
     offset,
     limit,
+    totalPages,
+    currentPage,
     handlePaginationChange,
   };
 };
