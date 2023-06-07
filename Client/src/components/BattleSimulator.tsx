@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import { fetchPokemonList } from "../util/fetchPokemonList";
@@ -6,7 +6,7 @@ import { PokemonType } from "../types/PokemonType";
 import { SelectedTeamContext } from "../context/SelectedTeamContext";
 
 const BattleSimulator = () => {
-  let MAX_POKEMON_HP = 100;
+  const MAX_POKEMON_HP = 100;
   const { isLoading, error, data } = useQuery<PokemonType[], Error>(
     ["pokemonList"],
     () => fetchPokemonList(0, 151)
@@ -78,7 +78,7 @@ const BattleSimulator = () => {
           setPokemonData(response.data);
         })
         .catch((error) => {
-          console.error("Error fetching Pokemon data:", error);
+          throw new Error("Error fetching Pokemon data:", error);
         });
     }
   }, [selectedTeam]);
@@ -95,7 +95,7 @@ const BattleSimulator = () => {
           setComputerPokemonData(response.data);
         })
         .catch((error) => {
-          console.error("Error fetching computer's Pokemon data:", error);
+          throw new Error("Error fetching computer's Pokemon data:", error);
         });
     }
   }, [computerPokemon]);
@@ -132,11 +132,9 @@ const BattleSimulator = () => {
             const newHP = prevHP - damage;
             if (newHP <= 0) {
               if (selectedTeam.length > 1) {
-                // Switch to the next Pokémon in the reserved team
                 setSelectedTeam((prevTeam) => prevTeam.slice(1));
                 setPlayerPokemonHP(MAX_POKEMON_HP);
               } else {
-                // No more reserved Pokémon, player loses
                 setSelectedTeam([]);
                 setPlayerPokemonHP(0);
               }
@@ -146,7 +144,7 @@ const BattleSimulator = () => {
         }
       })
       .catch((error) => {
-        console.error("Error fetching move data:", error);
+        throw new Error("Error fetching move data:", error);
       });
 
     if (isPlayer) {
@@ -170,7 +168,7 @@ const BattleSimulator = () => {
         setPlayerPokemonHP((prevHP) => prevHP - damage);
       })
       .catch((error) => {
-        console.error("Error fetching move data:", error);
+        throw new Error("Error fetching move data:", error);
       });
   };
 
@@ -282,7 +280,7 @@ const BattleSimulator = () => {
           </div>
         ) : (
           <div>
-            <h2>Player's Pokemon:</h2>
+            <h2>Player&#39;s Pokemon:</h2>
             <p>None</p>
           </div>
         )}

@@ -16,7 +16,6 @@ export const fetchPokemonAttack = async (
     const response: AxiosResponse<PokemonAttackData> = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching Pokemon data:", error);
     throw new Error("Failed to fetch Pokemon attack.");
   }
 };
