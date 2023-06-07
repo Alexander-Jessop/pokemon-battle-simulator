@@ -108,7 +108,6 @@ const PokemonList = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap">{renderSelectedPokemon()}</div>
       {renderPokemonList()}
       {renderPagination()}
     </div>
