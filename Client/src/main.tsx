@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { SelectedTeamProvider } from "./components/pokemon/SelectedTeamContext";
+import { SelectedTeamProvider } from "./context/SelectedTeamContext.tsx";
 
 import App from "./App.tsx";
 import "./index.css";

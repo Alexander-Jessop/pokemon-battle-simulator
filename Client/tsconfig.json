@@ -22,8 +22,16 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noUnusedParameters": true,
-    "strict": true,
+    "strict": true
   },
-  "include": [".eslintrc.cjs", "src/**/*", "tailwind.config.js", "vite.config.ts", "postcss.config.js", "jest.config.js"],
+  "include": [
+    ".eslintrc.cjs",
+    "src/**/*",
+    "tailwind.config.js",
+    "vite.config.ts",
+    "postcss.config.js",
+    "jest.config.js",
+    "src/context"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

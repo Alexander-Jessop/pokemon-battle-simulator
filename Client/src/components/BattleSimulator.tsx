@@ -3,7 +3,7 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { fetchPokemonList } from "../util/fetchPokemonList";
 import { PokemonType } from "../types/PokemonType";
-import { SelectedTeamContext } from "./pokemon/SelectedTeamContext";
+import { SelectedTeamContext } from "../context/SelectedTeamContext";
 
 const BattleSimulator = () => {
   const { isLoading, error, data } = useQuery<PokemonType[], Error>(
