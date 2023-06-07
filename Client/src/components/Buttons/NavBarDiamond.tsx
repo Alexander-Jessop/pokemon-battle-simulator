@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 interface NavBarButtonProps {
   path: string;
   name: string;
-  style?: React.CSSProperties;
+  className?: string;
 }
 
-const NavBarButton: React.FC<NavBarButtonProps> = ({ path, name, style }) => {
+const NavBarButton: React.FC<NavBarButtonProps> = ({
+  path,
+  name,
+  className,
+}) => {
   return (
-    <Link to={path} style={style}>
+    <Link to={path} className={className}>
       {name}
     </Link>
   );
