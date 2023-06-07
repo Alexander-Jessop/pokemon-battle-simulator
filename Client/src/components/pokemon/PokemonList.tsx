@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchPokemonList } from "../../util/fetchPokemonList";
 import PokemonCard from "./PokemonCard";
@@ -7,9 +6,7 @@ import { useSelectedTeam } from "../../hooks/useSelectedTeam";
 import { usePagination } from "../../hooks/usePagination";
 
 const PokemonList = () => {
-  const navigate = useNavigate();
-  const { selectedTeam, handleSelectOrRemove, isReadyToBattle } =
-    useSelectedTeam();
+  const { selectedTeam, handleSelectOrRemove } = useSelectedTeam();
   const { offset, limit, handlePaginationChange } = usePagination(0, 20, 151);
 
   const {
@@ -19,30 +16,6 @@ const PokemonList = () => {
     error,
   } = useQuery<PokemonType[], Error>(["pokemonList", offset, limit], () =>
     fetchPokemonList(offset, limit)
-  );
-
-  const handleReadyToBattle = () => {
-    navigate("/battle");
-  };
-
-  const renderSelectedPokemon = () => (
-    <>
-      <h2>Selected Pokemon:</h2>
-      {selectedTeam.map((pokemon: PokemonType) => (
-        <div key={pokemon.id}>
-          <PokemonCard
-            pokemon={pokemon}
-            onSelect={() => handleSelectOrRemove(pokemon)}
-            isSelected={true}
-          />
-        </div>
-      ))}
-      {isReadyToBattle() && (
-        <div>
-          <button onClick={handleReadyToBattle}>Ready to Battle</button>
-        </div>
-      )}
-    </>
   );
 
   const renderPokemonList = () => {
