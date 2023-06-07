@@ -2,11 +2,11 @@ import { useState, useContext } from "react";
 import { SelectedTeamContext } from "../context/SelectedTeamContext";
 import { PokemonType } from "../types/PokemonType";
 
-export function usePagination(
+export const usePagination = (
   initialOffset: number,
   initialLimit: number,
   maxOffset: number
-) {
+) => {
   const [offset, setOffset] = useState<number>(initialOffset);
   const [limit, setLimit] = useState<number>(initialLimit);
   const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
@@ -33,4 +33,4 @@ export function usePagination(
     limit,
     handlePaginationChange,
   };
-}
+};

@@ -1,12 +1,22 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-export const fetchPokemonAttack = async (pokemonId: number): Promise<any> => {
-  const url = `${import.meta.env.VITE_POKEMON_BATTLEING_API}${pokemonId}`;
+const POKEMON_BATTLE_API: string = import.meta.env.VITE_POKEMON_BATTLEING_API;
 
-  return await axios
-    .get(url)
-    .then((response) => response.data)
-    .catch((error) => {
-      console.error("Error fetching Pokemon data:", error);
-    });
+interface PokemonAttackData {
+  sprites: string;
+  types: string[];
+  moves: { name: string; url: string }[];
+}
+
+export const fetchPokemonAttack = async (
+  pokemonId: number
+): Promise<PokemonAttackData> => {
+  try {
+    const url = `${POKEMON_BATTLE_API}${pokemonId}`;
+    const response: AxiosResponse<PokemonAttackData> = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Pokemon data:", error);
+    throw new Error("Failed to fetch Pokemon attack.");
+  }
 };

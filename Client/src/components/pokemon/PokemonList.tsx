@@ -1,20 +1,15 @@
-// PokemonList.tsx
-import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchPokemonList } from "../../util/fetchPokemonList";
 import PokemonCard from "./PokemonCard";
 import { PokemonType } from "../../types/PokemonType";
+import { useSelectedTeam } from "../../hooks/useSelectedTeam";
 import { usePagination } from "../../hooks/usePagination";
 
-interface PokemonListProps {
-  selectedTeam: PokemonType[];
-  handleSelectOrRemove: (pokemon: PokemonType) => void;
-}
-
-const PokemonList: React.FC<PokemonListProps> = ({
-  selectedTeam,
-  handleSelectOrRemove,
-}) => {
+const PokemonList = () => {
+  const navigate = useNavigate();
+  const { selectedTeam, handleSelectOrRemove, isReadyToBattle } =
+    useSelectedTeam();
   const { offset, limit, handlePaginationChange } = usePagination(0, 20, 151);
 
   const {
@@ -24,6 +19,30 @@ const PokemonList: React.FC<PokemonListProps> = ({
     error,
   } = useQuery<PokemonType[], Error>(["pokemonList", offset, limit], () =>
     fetchPokemonList(offset, limit)
+  );
+
+  const handleReadyToBattle = () => {
+    navigate("/battle");
+  };
+
+  const renderSelectedPokemon = () => (
+    <>
+      <h2>Selected Pokemon:</h2>
+      {selectedTeam.map((pokemon: PokemonType) => (
+        <div key={pokemon.id}>
+          <PokemonCard
+            pokemon={pokemon}
+            onSelect={() => handleSelectOrRemove(pokemon)}
+            isSelected={true}
+          />
+        </div>
+      ))}
+      {isReadyToBattle() && (
+        <div>
+          <button onClick={handleReadyToBattle}>Ready to Battle</button>
+        </div>
+      )}
+    </>
   );
 
   const renderPokemonList = () => {
@@ -37,19 +56,22 @@ const PokemonList: React.FC<PokemonListProps> = ({
       ?.slice(0, limit);
 
     return (
-      <div className="m-10 flex flex-wrap justify-center">
-        {filteredPokemonList?.map((pokemon: PokemonType) => (
-          <PokemonCard
-            pokemon={pokemon}
-            key={pokemon.id}
-            onSelect={() => handleSelectOrRemove(pokemon)}
-            isSelected={selectedTeam.some(
-              (selectedPokemon: PokemonType) =>
-                selectedPokemon.id === pokemon.id
-            )}
-          />
-        ))}
-      </div>
+      <>
+        <h1>Pokemon List</h1>
+        <div className="m-10 flex flex-wrap justify-center">
+          {filteredPokemonList?.map((pokemon: PokemonType) => (
+            <PokemonCard
+              pokemon={pokemon}
+              key={pokemon.id}
+              onSelect={() => handleSelectOrRemove(pokemon)}
+              isSelected={selectedTeam.some(
+                (selectedPokemon: PokemonType) =>
+                  selectedPokemon.id === pokemon.id
+              )}
+            />
+          ))}
+        </div>
+      </>
     );
   };
 
@@ -86,8 +108,9 @@ const PokemonList: React.FC<PokemonListProps> = ({
 
   return (
     <div>
-      {renderPagination()}
+      <div className="flex flex-wrap">{renderSelectedPokemon()}</div>
       {renderPokemonList()}
+      {renderPagination()}
     </div>
   );
 };

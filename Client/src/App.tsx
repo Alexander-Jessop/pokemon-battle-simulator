@@ -6,7 +6,7 @@ import LandingPage from "./pages/LandingPage";
 import SelectPokemonPage from "./pages/SelectPokemonPage";
 import BattleSimulator from "./components/BattleSimulator";
 
-function App(): React.JSX.Element {
+function App() {
   return (
     <>
       <NavBar />

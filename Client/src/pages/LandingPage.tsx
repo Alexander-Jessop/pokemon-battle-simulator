@@ -1,6 +1,4 @@
-import React from "react";
-
-const LandingPage: React.FC = () => {
+const LandingPage = () => {
   return <div>LandingPage</div>;
 };
 

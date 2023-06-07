@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { SelectedTeamContext } from "../context/SelectedTeamContext";
 import { PokemonType } from "../types/PokemonType";
 
-export function useSelectedTeam() {
+export const useSelectedTeam = () => {
   const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
 
   const handlePokemonSelect = (pokemon: PokemonType) => {
@@ -48,4 +48,4 @@ export function useSelectedTeam() {
     handleSelectOrRemove,
     isReadyToBattle,
   };
-}
+};

@@ -1,7 +1,5 @@
-/* eslint-disable tailwindcss/classnames-order */
-import React from "react";
 import { useLocation } from "react-router-dom";
-import NavBarDiamond from "./Buttons/NavBarDiamond";
+import NavBarDiamond from "./Buttons/NavBarLink";
 
 const routes = [
   { path: "/", name: "Home" },

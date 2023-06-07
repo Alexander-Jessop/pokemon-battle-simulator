@@ -5,7 +5,7 @@ import PokemonList from "../components/pokemon/PokemonList";
 import { PokemonType } from "../types/PokemonType";
 import PokemonCard from "../components/pokemon/PokemonCard";
 
-const SelectPokemonPage: React.FC = () => {
+const SelectPokemonPage = () => {
   const navigate = useNavigate();
 
   const { selectedTeam, handleSelectOrRemove, isReadyToBattle } =
