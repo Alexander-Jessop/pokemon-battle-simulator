@@ -5,7 +5,7 @@ const routes = [
   { path: "/", name: "Home" },
   { path: "/pokemon-selection", name: "Select Pokemon" },
   { path: "/battle", name: "Pokemon Stadium" },
-  { path: "/singup", name: "Sign Up" },
+  { path: "/login", name: "Log In" },
 ];
 
 const NavBar = () => {

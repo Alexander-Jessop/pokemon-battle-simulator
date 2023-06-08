@@ -19,6 +19,10 @@ export default defineConfig(() => {
       "process.env.VITE_BATTLE_POKEMON_API": JSON.stringify(
         process.env.VITE_BATTLE_POKEMON_API
       ),
+      "process.env.VITE_USER_API": JSON.stringify(process.env.VITE_USER_API),
+      "process.env.VITE_USER_LOGIN_API": JSON.stringify(
+        process.env.VITE_USER_LOGIN_API
+      ),
     },
   };
 });

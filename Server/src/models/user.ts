@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 interface User extends Document {
   name: string;
   email: string;
+  password: string;
   favorites: string[] | null;
   selectedPokemon: string[] | null;
   visits: number;
@@ -18,6 +19,11 @@ const userSchema = new Schema<User>({
     required: true,
   },
   email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
     type: String,
     required: true,
   },
