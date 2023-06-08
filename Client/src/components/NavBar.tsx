@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useLocation } from "react-router-dom";
 import NavBarDiamond from "./Buttons/NavBarLink";
 
@@ -10,6 +11,15 @@ const routes = [
 
 const NavBar = () => {
   const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post(import.meta.env.VITE_USER_LOGOUT_API);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div
@@ -32,6 +42,15 @@ const NavBar = () => {
                 />
               </li>
             ))}
+            <li>
+              <button
+                onClick={handleLogout}
+                className="mx-1.5 border-b-2 border-transparent
+                hover:border-tertiary-400 sm:mx-6"
+              >
+                Logout
+              </button>
+            </li>
           </ul>
         </div>
       </nav>

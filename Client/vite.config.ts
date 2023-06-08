@@ -23,6 +23,9 @@ export default defineConfig(() => {
       "process.env.VITE_USER_LOGIN_API": JSON.stringify(
         process.env.VITE_USER_LOGIN_API
       ),
+      "process.env.VITE_USER_LOGOUT_API": JSON.stringify(
+        process.env.VITE_USER_LOGOUT_API
+      ),
     },
   };
 });
