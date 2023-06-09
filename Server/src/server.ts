@@ -1,8 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 
+import sessionConfig from "./dB/session-config.js";
 import pokemonRouter from "./routes/pokemonRoutes.js";
-import battleRouter from "./routes/battleRoutes.js";
+// import battleRouter from "./routes/battleRoutes.js";
 import connectToDatabase from "./dB/db-connection.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -17,9 +18,11 @@ app.get("/", (_req, res) => {
   res.send("Send React app here");
 });
 
+sessionConfig(app);
+
 app.use("/api/users", userRoutes);
 
-app.use("/api/battle", battleRouter);
+// app.use("/api/battle", battleRouter);
 app.use("/api", pokemonRouter);
 
 connectToDatabase();

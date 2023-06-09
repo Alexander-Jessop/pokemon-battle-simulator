@@ -20,6 +20,7 @@ const BattleSimulator = () => {
     useState<number>(MAX_POKEMON_HP);
   const [playerPokemonHP, setPlayerPokemonHP] =
     useState<number>(MAX_POKEMON_HP);
+  const [isSwitchMenuOpen, setSwitchMenuOpen] = useState(false);
 
   const selectRandomPokemon = (pokemonList: PokemonType[]) => {
     const randomPokemon: PokemonType[] = [];
@@ -111,65 +112,69 @@ const BattleSimulator = () => {
     return calculatedDamage;
   };
 
-  const handleAttack = (moveUrl: string, isPlayer: boolean) => {
-    axios
-      .get(moveUrl)
-      .then((response) => {
-        const moveData = response.data;
-        const damage = calculateDamage(moveData.power);
+  const handleAttack = async (moveUrl: string, isPlayer: boolean) => {
+    try {
+      const response = await axios.get(moveUrl);
+      const moveData = response.data;
+      const damage = calculateDamage(moveData.power);
 
-        if (isPlayer) {
-          setComputerPokemonHP((prevHP) => {
-            const newHP = prevHP - damage;
-            if (newHP <= 0) {
-              setComputerPokemonHP(MAX_POKEMON_HP);
-              setComputerPokemon((prevPokemon) => prevPokemon.slice(1));
+      if (isPlayer) {
+        setComputerPokemonHP((prevHP) => {
+          const newHP = prevHP - damage;
+          if (newHP <= 0) {
+            setComputerPokemonHP(MAX_POKEMON_HP);
+            setComputerPokemon((prevPokemon) => prevPokemon.slice(1));
+          }
+          return newHP;
+        });
+      } else {
+        setPlayerPokemonHP((prevHP) => {
+          const newHP = prevHP - damage;
+          if (newHP <= 0) {
+            if (selectedTeam.length > 1) {
+              setSelectedTeam((prevTeam) => prevTeam.slice(1));
+              setPlayerPokemonHP(MAX_POKEMON_HP);
+            } else {
+              setSelectedTeam([]);
+              setPlayerPokemonHP(0);
             }
-            return newHP;
-          });
-        } else {
-          setPlayerPokemonHP((prevHP) => {
-            const newHP = prevHP - damage;
-            if (newHP <= 0) {
-              if (selectedTeam.length > 1) {
-                setSelectedTeam((prevTeam) => prevTeam.slice(1));
-                setPlayerPokemonHP(MAX_POKEMON_HP);
-              } else {
-                setSelectedTeam([]);
-                setPlayerPokemonHP(0);
-              }
-            }
-            return newHP;
-          });
-        }
-      })
-      .catch((error) => {
-        throw new Error("Error fetching move data:", error);
-      });
+          }
+          return newHP;
+        });
+      }
+    } catch (error) {
+      throw new Error("Error fetching move data:", error);
+    }
 
     if (isPlayer) {
       handleComputerTurn();
     }
   };
 
-  const handleComputerTurn = () => {
+  const handleComputerTurn = async () => {
     const randomMoveIndex = Math.floor(
       Math.random() * computerPokemonData.moves.length
     );
     const randomMove = computerPokemonData.moves[randomMoveIndex];
     const moveUrl = randomMove.url;
 
-    axios
-      .get(moveUrl)
-      .then((response) => {
-        const moveData = response.data;
-        const damage = calculateDamage(moveData.power);
+    try {
+      const response = await axios.get(moveUrl);
+      const moveData = response.data;
+      const damage = calculateDamage(moveData.power);
 
-        setPlayerPokemonHP((prevHP) => prevHP - damage);
-      })
-      .catch((error) => {
-        throw new Error("Error fetching move data:", error);
-      });
+      setPlayerPokemonHP((prevHP) => prevHP - damage);
+    } catch (error) {
+      throw new Error("Error fetching move data:", error);
+    }
+  };
+
+  const openSwitchMenu = () => {
+    setSwitchMenuOpen(true);
+  };
+
+  const closeSwitchMenu = () => {
+    setSwitchMenuOpen(false);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -177,111 +182,132 @@ const BattleSimulator = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   return (
-    <div>
+    <div className="flex h-screen items-center justify-center bg-gray-300">
       <div>
-        <h2>Computer&#39;s Pokemon:</h2>
-        {computerPokemon.length > 0 ? (
-          <div>
-            <p>{computerPokemon[0].name}</p>
-            {computerPokemonData && (
-              <div>
-                <p>
-                  Sprites:{" "}
-                  <img src={computerPokemonData.sprites} alt="Pokemon Sprite" />
-                </p>
-                <p>
-                  Types:{" "}
-                  {computerPokemonData.types.map((type: any) => (
-                    <span key={type.type.name}>{type.type.name} </span>
-                  ))}
-                </p>
-                <p>
-                  Moves:{" "}
-                  {computerPokemonData.moves.map((move: any) => (
-                    <button
-                      key={move.name}
-                      onClick={() => handleAttack(move.url, false)}
-                    >
-                      {move.name}
-                    </button>
-                  ))}
-                </p>
-              </div>
-            )}
-            <p>HP: {computerPokemonHP}</p> {/* Display computer's HP */}
+        <div className="rounded-lg border border-gray-500 p-4 shadow-inner">
+          <div className="flex flex-col-reverse justify-between md:flex-row">
+            <div className="mr-28 mt-28 md:order-1 md:mb-0">
+              {selectedTeam.length > 0 && pokemonData && (
+                <div className="relative">
+                  <img
+                    src={pokemonData.sprites}
+                    alt="Pokemon Sprite"
+                    className="pokemon-sprite h-64 w-64"
+                  />
+                  <h2 className="text-lg font-bold capitalize">
+                    {selectedTeam[0].name}
+                  </h2>
+                  <p>HP: {playerPokemonHP}</p>
+                </div>
+              )}
+              {selectedTeam.length === 0 && (
+                <div>
+                  <p>None</p>
+                </div>
+              )}
+            </div>
+            <div className="mb-28 ml-28 md:order-2">
+              <h2 className="text-lg font-bold capitalize">
+                {computerPokemon.length > 0 && computerPokemon[0].name}
+              </h2>
+              {computerPokemon.length > 0 && computerPokemonData && (
+                <div className="relative mt-8">
+                  <img
+                    src={computerPokemonData.sprites}
+                    alt="Pokemon Sprite"
+                    className="pokemon-sprite h-48 w-48"
+                  />
+                  <p>HP: {computerPokemonHP}</p>
+                </div>
+              )}
+
+              {computerPokemon.length === 0 && (
+                <div>
+                  <p>None</p>
+                </div>
+              )}
+            </div>
           </div>
-        ) : (
-          <p>None</p>
-        )}
-      </div>
-      <ul>
-        {computerPokemon.map((pokemon, index) => {
-          const isReleased = releasedPokemon.includes(index);
-          return (
-            <li key={pokemon.id}>
-              {isReleased ? (
-                pokemon.name
-              ) : (
-                <button onClick={() => releasePokemon(index)}>Release</button>
-              )}
-              {!isReleased && (
-                <button onClick={() => switchPokemon(index, false)}>
-                  Switch
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-      <div>
-        <h2>Player&#39;s Pokemon:</h2>
-        {selectedTeam.length > 0 ? (
-          <div>
-            <p>{selectedTeam[0].name}</p>
-            {pokemonData && (
-              <div>
-                <p>
-                  Sprites:{" "}
-                  <img src={pokemonData.sprites} alt="Pokemon Sprite" />
-                </p>
-                <p>
-                  Types:{" "}
-                  {pokemonData.types.map((type: any) => (
-                    <span key={type.type.name}>{type.type.name} </span>
-                  ))}
-                </p>
-                <p>
-                  Moves:{" "}
-                  {pokemonData.moves.map((move: any) => (
+        </div>
+        <div className="flex">
+          {selectedTeam.length > 0 && pokemonData && (
+            <div className="mt-4">
+              <h3 className="text-sm font-bold">Moves:</h3>
+              <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col">
+                  {pokemonData.moves.slice(0, 2).map((move: any) => (
                     <button
                       key={move.name}
                       onClick={() => handleAttack(move.url, true)}
+                      className="mb-2 rounded bg-primary-500
+                        px-2 py-1 text-white hover:bg-primary-600"
                     >
                       {move.name}
                     </button>
                   ))}
-                </p>
+                </div>
+                <div className="ml-4 flex flex-col">
+                  {pokemonData.moves.slice(2, 4).map((move: any) => (
+                    <button
+                      key={move.name}
+                      onClick={() => handleAttack(move.url, true)}
+                      className="mb-2 rounded bg-primary-500 px-2
+                        py-1 text-white hover:bg-primary-600"
+                    >
+                      {move.name}
+                    </button>
+                  ))}
+                </div>
               </div>
-            )}
-            <p>HP: {playerPokemonHP}</p>
-            <div>
-              <h2>Reserved Pokemon:</h2>
+            </div>
+          )}
+          {selectedTeam.length > 1 && (
+            <div className="mt-4">
+              <h2 className="ml-6 text-lg font-bold">Reserved Pokemon:</h2>
+
+              <button
+                onClick={openSwitchMenu}
+                className="ml-6 rounded bg-secondary-500 px-2
+                  py-1 text-white hover:bg-secondary-600"
+              >
+                Switch Pokemon
+              </button>
+            </div>
+          )}
+        </div>
+
+        {isSwitchMenuOpen && (
+          <div
+            className="fixed bottom-0 left-0 right-0 top-0 flex
+            items-center justify-center bg-black bg-opacity-50"
+          >
+            <div className="bg-white p-4">
+              <h2 className="text-lg font-bold">Switch Pokemon:</h2>
               <ul>
                 {selectedTeam.slice(1).map((pokemon, index) => (
                   <li key={pokemon.id}>
                     {pokemon.name}
-                    <button onClick={() => switchPokemon(index + 1, true)}>
+                    <button
+                      onClick={() => {
+                        switchPokemon(index + 1, true);
+                        closeSwitchMenu();
+                      }}
+                      className="ml-2 rounded bg-secondary-500 px-2 py-1
+                        text-white hover:bg-secondary-600"
+                    >
                       Switch
                     </button>
                   </li>
                 ))}
               </ul>
+              <button
+                onClick={closeSwitchMenu}
+                className="mt-4 rounded bg-gray-500 px-2 py-1 text-white
+                  hover:bg-gray-600"
+              >
+                Close
+              </button>
             </div>
-          </div>
-        ) : (
-          <div>
-            <h2>Player&#39;s Pokemon:</h2>
-            <p>None</p>
           </div>
         )}
       </div>

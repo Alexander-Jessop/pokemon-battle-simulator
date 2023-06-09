@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import UserModel from "../models/user.js";
+import { Session } from "express-session";
+
+interface UserSession extends Session {
+  user: any;
+}
 
 export const signup = async (
   req: Request,
@@ -24,6 +29,9 @@ export const signup = async (
 
     const createdUser = await newUser.save();
 
+    const sessionUser: UserSession = req.session as UserSession;
+    sessionUser.user = createdUser;
+
     return res.status(201).json(createdUser);
   } catch (error) {
     console.error("Error creating user:", error);
@@ -33,8 +41,6 @@ export const signup = async (
 
 export const login = async (req: Request, res: Response): Promise<Response> => {
   const { email, password } = req.body;
-  console.log("email", email);
-  console.log("password", password);
   try {
     const user = await UserModel.findOne({ email });
     if (!user) {
@@ -46,9 +52,23 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
       return res.status(401).json({ error: "Incorrect password" });
     }
 
+    const sessionUser: UserSession = req.session as UserSession;
+    sessionUser.user = user;
+
     return res.status(200).json({ message: "User logged in" });
   } catch (error) {
     console.error("Error logging in user:", error);
     return res.status(500).json({ error: "Failed to log in user" });
   }
+};
+
+export const logout = (req: Request, res: Response): void => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      return res.status(500).json({ error: "Failed to logout" });
+    }
+    res.clearCookie("connect.sid");
+    return res.status(200).json({ message: "User logged out" });
+  });
 };
