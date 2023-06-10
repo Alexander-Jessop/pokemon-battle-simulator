@@ -26,7 +26,7 @@ interface PokemonListResponse {
 export const getPokemon = async (req: Request, res: Response) => {
   try {
     let offset = 0;
-    let limit = 20;
+    let limit = 10;
 
     if (req.query.offset) {
       offset = parseInt(req.query.offset as string, 10);

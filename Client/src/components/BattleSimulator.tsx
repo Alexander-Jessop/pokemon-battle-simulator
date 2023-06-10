@@ -192,7 +192,7 @@ const BattleSimulator = () => {
                   <img
                     src={pokemonData.sprites}
                     alt="Pokemon Sprite"
-                    className="pokemon-sprite h-64 w-64"
+                    className="h-64 w-64"
                   />
                   <h2 className="text-lg font-bold capitalize">
                     {selectedTeam[0].name}
@@ -206,18 +206,18 @@ const BattleSimulator = () => {
                 </div>
               )}
             </div>
-            <div className="mb-28 ml-28 md:order-2">
+            <div className="ml-28 md:order-2">
               <h2 className="text-lg font-bold capitalize">
                 {computerPokemon.length > 0 && computerPokemon[0].name}
               </h2>
+              <p>HP: {computerPokemonHP}</p>
               {computerPokemon.length > 0 && computerPokemonData && (
-                <div className="relative mt-8">
+                <div className="relative">
                   <img
                     src={computerPokemonData.sprites}
                     alt="Pokemon Sprite"
-                    className="pokemon-sprite h-48 w-48"
+                    className="h-48 w-48"
                   />
-                  <p>HP: {computerPokemonHP}</p>
                 </div>
               )}
 
@@ -263,7 +263,7 @@ const BattleSimulator = () => {
           )}
           {selectedTeam.length > 1 && (
             <div className="mt-4">
-              <h2 className="ml-6 text-lg font-bold">Reserved Pokemon:</h2>
+              <h2 className="ml-6 text-sm font-bold">Reserved Pokemon:</h2>
 
               <button
                 onClick={openSwitchMenu}
@@ -277,23 +277,22 @@ const BattleSimulator = () => {
         </div>
 
         {isSwitchMenuOpen && (
-          <div
-            className="fixed bottom-0 left-0 right-0 top-0 flex
-            items-center justify-center bg-black bg-opacity-50"
-          >
-            <div className="bg-white p-4">
-              <h2 className="text-lg font-bold">Switch Pokemon:</h2>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="w-1/3 rounded-lg bg-white p-4 shadow-lg">
+              <h2 className="mb-4 text-lg font-bold">Pokemon:</h2>
               <ul>
                 {selectedTeam.slice(1).map((pokemon, index) => (
-                  <li key={pokemon.id}>
-                    {pokemon.name}
+                  <li
+                    key={pokemon.id}
+                    className="flex items-center justify-between border-b border-gray-200 py-2"
+                  >
+                    <span>{pokemon.name}</span>
                     <button
                       onClick={() => {
                         switchPokemon(index + 1, true);
                         closeSwitchMenu();
                       }}
-                      className="ml-2 rounded bg-secondary-500 px-2 py-1
-                        text-white hover:bg-secondary-600"
+                      className="ml-2 rounded bg-secondary-500 px-4 py-2 text-white hover:bg-secondary-600"
                     >
                       Switch
                     </button>
@@ -302,8 +301,7 @@ const BattleSimulator = () => {
               </ul>
               <button
                 onClick={closeSwitchMenu}
-                className="mt-4 rounded bg-gray-500 px-2 py-1 text-white
-                  hover:bg-gray-600"
+                className="mt-4 rounded bg-gray-500 px-4 py-2 text-white hover:bg-gray-600"
               >
                 Close
               </button>

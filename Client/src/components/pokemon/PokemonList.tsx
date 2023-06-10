@@ -8,7 +8,7 @@ import { usePagination } from "../../hooks/usePagination";
 const PokemonList = () => {
   const { selectedTeam, handleSelectOrRemove } = useSelectedTeam();
   const { offset, limit, totalPages, currentPage, handlePaginationChange } =
-    usePagination(0, 20, 151, 151);
+    usePagination(0, 10, 151, 151);
 
   const {
     data: pokemonList,
@@ -31,7 +31,9 @@ const PokemonList = () => {
 
     return (
       <>
-        <h1>Choose Your Pokemon:</h1>
+        <h1 className="mb-5 mt-10 text-center text-4xl font-bold">
+          Choose your Pokemon Team
+        </h1>
         <div className="m-10 flex flex-wrap justify-center">
           {filteredPokemonList?.map((pokemon: PokemonType) => (
             <PokemonCard
@@ -50,21 +52,25 @@ const PokemonList = () => {
   };
 
   const renderPagination = () => (
-    <div className="flex justify-center">
+    <div className="mt-5 flex items-center justify-center space-x-2">
+      <span>Show:</span>
       <select
         value={limit}
         onChange={(e) =>
           handlePaginationChange(offset, +e.target.value as number)
         }
+        className="rounded-md border border-gray-300 bg-white px-2 py-1"
       >
         <option value={10}>10</option>
         <option value={20}>20</option>
         <option value={50}>50</option>
       </select>
-      <div className="mr-5">Page: {currentPage}</div>
       <button
         onClick={() => handlePaginationChange(offset - limit, limit)}
-        className="mr-3"
+        className={`rounded-l-lg border border-gray-300 bg-white px-3 py-2
+        leading-tight text-secondary-800 hover:bg-gray-100
+        hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800
+        dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
       >
         Previous
       </button>
@@ -73,18 +79,27 @@ const PokemonList = () => {
         <button
           key={index}
           onClick={() => handlePaginationChange(index * limit, limit)}
-          className="mr-3"
+          className={`border border-gray-300 bg-white px-3 py-2 leading-tight
+          text-secondary-800 hover:bg-gray-100 hover:text-gray-700
+          dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400
+          dark:hover:bg-gray-700 dark:hover:text-white ${
+            currentPage === index + 1 ? "bg-primary-200 text-primary-50" : ""
+          }`}
         >
           {index + 1}
         </button>
       ))}
       <button
         onClick={() => handlePaginationChange(offset + limit, limit)}
-        className="mr-5"
+        className={`rounded-r-lg border border-gray-300 bg-white px-3 py-2
+        leading-tight text-secondary-800 hover:bg-gray-100
+        hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800
+        dark:text-gray-400 dark:hover:bg-gray-700 
+         dark:hover:text-white
+        `}
       >
         Next
       </button>
-      <div>Total Pages: {totalPages}</div>
     </div>
   );
 
@@ -101,7 +116,7 @@ const PokemonList = () => {
   return (
     <div>
       {renderPokemonList()}
-      {renderPagination()}
+      <div className="mb-10">{renderPagination()}</div>
     </div>
   );
 };
