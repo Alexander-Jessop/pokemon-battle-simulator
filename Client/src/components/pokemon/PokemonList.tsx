@@ -30,11 +30,11 @@ const PokemonList = () => {
       ?.slice(0, limit);
 
     return (
-      <>
+      <div className="flex flex-col items-center justify-center">
         <h1 className="mb-5 mt-10 text-center text-4xl font-bold">
-          Choose your Pokemon Team
+          Choose your Pokemon
         </h1>
-        <div className="m-10 flex flex-wrap justify-center">
+        <div className="m-10 flex max-w-8xl flex-wrap justify-center">
           {filteredPokemonList?.map((pokemon: PokemonType) => (
             <PokemonCard
               pokemon={pokemon}
@@ -47,7 +47,7 @@ const PokemonList = () => {
             />
           ))}
         </div>
-      </>
+      </div>
     );
   };
 
@@ -81,7 +81,7 @@ const PokemonList = () => {
         text-secondary-800 hover:bg-gray-100 hover:text-gray-700
         dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400
         dark:hover:bg-gray-700 dark:hover:text-white ${
-          currentPage === index + 1 ? "bg-primary-100 text-primary-50" : ""
+          currentPage === index + 1 ? "bg-primary-200 text-primary-50" : ""
         }`}
         >
           {index + 1}

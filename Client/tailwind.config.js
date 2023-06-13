@@ -5,6 +5,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      maxWidth: {
+        "8xl": "90rem",
+      },
       spacing: {
         1: "0.25rem",
         2: "0.5rem",

@@ -21,23 +21,36 @@ const SelectPokemonPage = () => {
     }
 
     return (
-      <>
-        <h2>Selected Pokemon:</h2>
-        {selectedTeam.map((pokemon: PokemonType) => (
-          <div key={pokemon.id}>
-            <PokemonCard
-              pokemon={pokemon}
-              onSelect={() => handleSelectOrRemove(pokemon)}
-              isSelected={true}
-            />
-          </div>
-        ))}
+      <div className="mx-auto max-w-8xl py-6">
+        <h2 className="mb-4 text-center text-2xl font-semibold">
+          Selected Pokemon:
+        </h2>
+        <div
+          className="grid grid-cols-1 justify-items-center
+        gap-4 md:grid-cols-2  lg:grid-cols-3"
+        >
+          {selectedTeam.map((pokemon: PokemonType) => (
+            <div key={pokemon.id}>
+              <PokemonCard
+                pokemon={pokemon}
+                onSelect={() => handleSelectOrRemove(pokemon)}
+                isSelected={true}
+              />
+            </div>
+          ))}
+        </div>
         {isReadyToBattle() && (
-          <div>
-            <button onClick={handleReadyToBattle}>Ready to Battle</button>
+          <div className="mt-4 flex justify-center">
+            <button
+              className="rounded bg-blue-500 px-4 py-2
+              text-white hover:bg-blue-600"
+              onClick={handleReadyToBattle}
+            >
+              Ready to Battle
+            </button>
           </div>
         )}
-      </>
+      </div>
     );
   };
 
