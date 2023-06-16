@@ -1,90 +1,44 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { useQuery } from "react-query";
 
-interface Pokemon {
-  id: number;
-  name: string;
-  sprite: string;
-}
+import { fetchPokemonList } from "../util/fetchPokemonList";
+import { PokemonType } from "../types/PokemonType";
+import RandomizedCollage from "../components/RandomizedCollage";
+import LoadingScreen from "../components/LoadingScreen";
+import ErrorScreen from "../components/ErrorScreen";
 
 const LandingPage = () => {
-  const [randomPokemon1, setRandomPokemon1] = useState<Pokemon | null>(null);
-  const [randomPokemon2, setRandomPokemon2] = useState<Pokemon | null>(null);
-  const [pokemonCollage, setPokemonCollage] = useState<Pokemon[]>([]);
+  const {
+    data: pokemonList,
+    isLoading,
+    error,
+  } = useQuery<PokemonType[], Error>("pokemonList", () =>
+    fetchPokemonList(0, 151)
+  );
+
+  const [randomPokemon1, setRandomPokemon1] = useState<PokemonType | null>(
+    null
+  );
+  const [randomPokemon2, setRandomPokemon2] = useState<PokemonType | null>(
+    null
+  );
 
   useEffect(() => {
-    const fetchRandomPokemon = async () => {
-      try {
-        const response = await axios.get<Pokemon[]>(
-          import.meta.env.VITE_POKEMON_LIST_API + "?limit=151"
-        );
-        const pokemonList = response.data;
-        const randomIndex1 = Math.floor(Math.random() * pokemonList.length);
-        const randomIndex2 = Math.floor(Math.random() * pokemonList.length);
-        const randomPokemon1 = pokemonList[randomIndex1];
-        const randomPokemon2 = pokemonList[randomIndex2];
-        setRandomPokemon1(randomPokemon1);
-        setRandomPokemon2(randomPokemon2);
-      } catch (error: unknown) {
-        if (typeof error === "string") {
-          throw new Error(error);
-        } else {
-          throw error;
-        }
-      }
-    };
+    if (pokemonList && (!randomPokemon1 || !randomPokemon2)) {
+      const randomIndex1 = Math.floor(Math.random() * pokemonList.length);
+      const randomIndex2 = Math.floor(Math.random() * pokemonList.length);
+      setRandomPokemon1(pokemonList[randomIndex1]);
+      setRandomPokemon2(pokemonList[randomIndex2]);
+    }
+  }, [pokemonList, randomPokemon1, randomPokemon2]);
 
-    fetchRandomPokemon();
-  }, []);
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
-  useEffect(() => {
-    const fetchPokemonCollage = async () => {
-      try {
-        const response = await axios.get<Pokemon[]>(
-          import.meta.env.VITE_POKEMON_LIST_API + "?limit=151"
-        );
-        setPokemonCollage(response.data);
-      } catch (error: unknown) {
-        if (typeof error === "string") {
-          throw new Error(error);
-        } else {
-          throw error;
-        }
-      }
-    };
-
-    fetchPokemonCollage();
-  }, []);
-
-  const RandomizedCollage = () => {
-    const randomizedCollage = pokemonCollage.sort(() => Math.random() - 0.5);
-
-    return (
-      <div className="mx-auto max-w-8xl p-8">
-        <div className="flex flex-wrap justify-center" style={{ opacity: 0.7 }}>
-          {randomizedCollage.map((pokemon, index) => (
-            <div
-              key={pokemon.id}
-              className="relative m-2 flex h-32 w-32 items-center
-              justify-center overflow-hidden rounded-lg"
-              style={{
-                perspective: "500px",
-                zIndex: index + 1,
-                transform: `rotate(${index % 2 === 0 ? "-" : ""}6deg)`,
-                boxShadow: "0 0 8px rgba(0, 0, 0, 0.3)",
-              }}
-            >
-              <img
-                src={pokemon.sprite}
-                alt={pokemon.name}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  if (error) {
+    return <ErrorScreen message={error.message} />;
+  }
 
   return (
     <div
@@ -128,7 +82,7 @@ const LandingPage = () => {
         </div>
       </div>
       <div className="absolute inset-0 z-0 m-10 overflow-hidden">
-        <RandomizedCollage />
+        <RandomizedCollage pokemonList={pokemonList} />
       </div>
       <style>
         {`

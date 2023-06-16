@@ -1,19 +1,12 @@
-import React from "react";
 import { PokemonType } from "../../types/PokemonType";
 
 interface Props {
   pokemon: PokemonType;
   onSelect: (pokemon: PokemonType) => void;
   isSelected: boolean;
-  selectedPokemonCount: number;
 }
 
-const PokemonCard = ({
-  pokemon,
-  onSelect,
-  isSelected,
-  selectedPokemonCount,
-}: Props) => {
+const PokemonCard = ({ pokemon, onSelect, isSelected }: Props) => {
   const handleSelect = () => {
     onSelect(pokemon);
   };
@@ -21,22 +14,14 @@ const PokemonCard = ({
   if (isSelected) {
     return (
       <div
-        className="overflow-hidden rounded-lg  bg-primary-600 shadow-lg
+        className="overflow-hidden rounded-lg bg-primary-600 shadow-lg
       transition duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
-        <div className="relative m-4 flex items-center justify-between ">
+        <div className="relative m-4 flex items-center justify-between">
           <div className="flex items-center">
             <div
-              className={`flex h-14 w-14 items-center justify-center
-              rounded-full border-4 border-white text-xl font-bold text-white ${
-                selectedPokemonCount > 1 ? "hidden" : ""
-              }`}
-              style={{
-                zIndex: selectedPokemonCount,
-                transform: `translate(${(selectedPokemonCount - 1) * -12}px, ${
-                  (selectedPokemonCount - 1) * -12
-                }px)`,
-              }}
+              className="flex h-14 w-14 items-center justify-center
+            rounded-full border-4 border-white text-xl font-bold text-white"
             >
               <img
                 className="h-10 w-10 rounded-full object-cover"
@@ -49,8 +34,8 @@ const PokemonCard = ({
             </h3>
           </div>
           <button
-            className={`ml-2 grow bg-primary-400 px-4 py-2 font-bold
-            text-white hover:bg-primary-200`}
+            className="ml-2 grow bg-primary-400 px-4 py-2 font-bold text-white
+            hover:bg-primary-200"
             onClick={handleSelect}
           >
             Remove
@@ -62,8 +47,8 @@ const PokemonCard = ({
 
   return (
     <div
-      className="m-4 overflow-hidden rounded-lg bg-white
-    shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+      className="m-4 overflow-hidden rounded-lg bg-white shadow-lg transition
+    duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       <div className="relative bg-primary-700 p-4">
         <h3 className="text-2xl font-semibold capitalize text-white">
@@ -73,8 +58,8 @@ const PokemonCard = ({
       <div className="mb-4 mt-2 flex justify-center">
         <div className="m-4 rounded-full bg-secondary-500 p-2 shadow-inner">
           <div
-            className="h-48 w-48 overflow-hidden
-          rounded-full border-4 border-white"
+            className="h-48 w-48 overflow-hidden rounded-full border-4
+          border-white"
           >
             <img
               className="h-full w-full object-contain"
@@ -96,8 +81,8 @@ const PokemonCard = ({
           {isSelected ? "Remove" : "Select"}
         </button>
         <button
-          className="grow bg-gray-500 px-4 py-2
-        font-bold text-white hover:bg-gray-700"
+          className="grow bg-gray-500 px-4 py-2 font-bold text-white
+        hover:bg-gray-700"
         >
           Pokedex
         </button>
