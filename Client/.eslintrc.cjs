@@ -31,7 +31,7 @@ module.exports = {
   ],
   rules: {
     quotes: ["error", "double", { allowTemplateLiterals: true }],
-    "max-len": ["error", { code: 80 }],
+    "max-len": ["error", { code: 85 }],
     "react-refresh/only-export-components": "warn",
     "no-console": "error",
     "no-unused-vars": "error",

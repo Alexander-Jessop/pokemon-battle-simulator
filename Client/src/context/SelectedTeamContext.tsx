@@ -3,7 +3,9 @@ import { PokemonType } from "../types/PokemonType";
 
 interface SelectedTeamContextType {
   selectedTeam: PokemonType[];
-  setSelectedTeam: React.Dispatch<React.SetStateAction<PokemonType[]>>;
+  setSelectedTeam:
+    | React.Dispatch<React.SetStateAction<PokemonType[]>>
+    | ((team: PokemonType[]) => void);
 }
 
 export const SelectedTeamContext = createContext<SelectedTeamContextType>({
@@ -15,9 +17,9 @@ interface SelectedTeamProviderProps {
   children: ReactNode;
 }
 
-export const SelectedTeamProvider: React.FC<SelectedTeamProviderProps> = ({
+export const SelectedTeamProvider = ({
   children,
-}) => {
+}: SelectedTeamProviderProps) => {
   const [selectedTeam, setSelectedTeam] = useState<PokemonType[]>([]);
   return (
     <SelectedTeamContext.Provider value={{ selectedTeam, setSelectedTeam }}>

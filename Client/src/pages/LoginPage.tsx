@@ -15,12 +15,14 @@ interface LoginFormData {
 }
 
 const LoginPage = () => {
+  const USER_API = "api/users/signup";
+  const USER_LOGIN_API = "api/users/login";
   const [error, setError] = useState<string | null>(null);
   const [showSignupForm, setShowSignupForm] = useState(true);
 
   const handleSignupSubmit = async (formData: SignupFormData) => {
     try {
-      await axios.post(import.meta.env.VITE_USER_API, formData);
+      await axios.post(USER_API, formData);
       setShowSignupForm(true);
       setError(null);
     } catch (error) {
@@ -30,7 +32,7 @@ const LoginPage = () => {
 
   const handleLoginSubmit = async (formData: LoginFormData) => {
     try {
-      await axios.post(import.meta.env.VITE_USER_LOGIN_API, formData);
+      await axios.post(USER_LOGIN_API, formData);
     } catch (error) {
       setError("Failed to log in. Please try again.");
     }
@@ -43,11 +45,11 @@ const LoginPage = () => {
   return (
     <div className="flex h-screen items-center justify-center">
       <div
-        className="flex h-2/4 w-2/4 flex-col items-center
-        justify-center bg-secondary-800"
+        className="min-h-2/4 flex w-1/3 flex-col items-center
+        justify-center rounded-lg bg-secondary-800 p-6 shadow-lg"
       >
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-secondary-400">
+          <h2 className="text-4xl font-bold text-secondary-200">
             {showSignupForm ? "Log In" : "Sign Up"}
           </h2>
           {error && <div className="mb-4 text-red-500">{error}</div>}
@@ -56,19 +58,21 @@ const LoginPage = () => {
           ) : (
             <SignupForm onSubmit={handleSignupSubmit} />
           )}
-          <p>
+          <p className="text-secondary-100">
             {showSignupForm
               ? "Don't have an account?"
               : "Already have account?"}
           </p>
-          <button className="text-secondary-400 underline" onClick={toggleForm}>
+          <button className="text-secondary-200 underline" onClick={toggleForm}>
             {showSignupForm ? "Sign Up" : "Log In"}
           </button>
         </div>
         <div>
-          <button className="text-secondary-400 underline">
-            Forgot Password?
-          </button>
+          {showSignupForm ? (
+            <button className="text-secondary-200 underline">
+              Forgot Password?
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

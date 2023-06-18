@@ -5,6 +5,7 @@ import { Session } from "express-session";
 
 interface UserSession extends Session {
   user: any;
+  selectedPokemon: any;
 }
 
 export const signup = async (

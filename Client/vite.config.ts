@@ -12,20 +12,6 @@ export default defineConfig(() => {
         "/api/": "http://localhost:3000",
       },
     },
-    define: {
-      "process.env.VITE_POKEMON_LIST_API": JSON.stringify(
-        process.env.VITE_POKEMON_LIST_API
-      ),
-      "process.env.VITE_BATTLE_POKEMON_API": JSON.stringify(
-        process.env.VITE_BATTLE_POKEMON_API
-      ),
-      "process.env.VITE_USER_API": JSON.stringify(process.env.VITE_USER_API),
-      "process.env.VITE_USER_LOGIN_API": JSON.stringify(
-        process.env.VITE_USER_LOGIN_API
-      ),
-      "process.env.VITE_USER_LOGOUT_API": JSON.stringify(
-        process.env.VITE_USER_LOGOUT_API
-      ),
-    },
+    define: {},
   };
 });

@@ -10,14 +10,14 @@ const routes = [
 ];
 
 const NavBar = () => {
+  const USER_LOGOUT_API = "api/users/logout";
   const location = useLocation();
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(import.meta.env.VITE_USER_LOGOUT_API);
-      console.log(response.data);
+      return await axios.post(USER_LOGOUT_API);
     } catch (error) {
-      console.error(error);
+      throw new Error("Logout failed. Please try again.");
     }
   };
 
@@ -37,7 +37,8 @@ const NavBar = () => {
                   className={`mx-1.5 ${
                     location.pathname === route.path
                       ? "border-b-2 border-tertiary-400"
-                      : "border-b-2border-transparent hover:border-tertiary-400"
+                      : `border-b-2 border-transparent 
+                      hover:border-tertiary-400`
                   } sm:mx-6`}
                 />
               </li>
@@ -48,7 +49,7 @@ const NavBar = () => {
                 className="mx-1.5 border-b-2 border-transparent
                 hover:border-tertiary-400 sm:mx-6"
               >
-                Logout
+                LOGOUT
               </button>
             </li>
           </ul>

@@ -19,7 +19,7 @@ const ListPagination = ({
       <select
         value={limit}
         onChange={(e) => handlePaginationChange(offset, +e.target.value)}
-        className="rounded-md border border-gray-300 bg-white px-2 py-1"
+        className="rounded-md border border-primary-300 bg-white px-2 py-1"
       >
         <option value={10}>10</option>
         <option value={20}>20</option>
@@ -27,10 +27,9 @@ const ListPagination = ({
       </select>
       <button
         onClick={() => handlePaginationChange(offset - limit, limit)}
-        className={`rounded-l-lg border border-gray-300 bg-white px-3 py-2
-            leading-tight text-secondary-800 hover:bg-gray-100
-            hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800
-            dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white`}
+        className="rounded-l-lg border border-primary-300 bg-white px-3 py-2
+            leading-tight text-secondary-800 hover:bg-primary-100
+            hover:text-primary-700"
       >
         Previous
       </button>
@@ -39,14 +38,10 @@ const ListPagination = ({
         <button
           key={index}
           onClick={() => handlePaginationChange(index * limit, limit)}
-          className={`border border-gray-300 bg-white px-3 py-2 leading-tight
-            text-secondary-800 hover:bg-gray-100 hover:text-gray-700
-            dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400
-            dark:hover:bg-gray-700 dark:hover:text-white ${
-              currentPage === index + 1
-                ? "bg-secondary-300 text-primary-50"
-                : ""
-            }`}
+          className={`border border-primary-300 bg-white px-3 py-2 leading-tight
+          text-secondary-800 hover:bg-primary-100 hover:text-accent-400 ${
+            currentPage === index + 1 ? "bg-primary-300 text-primary-50" : ""
+          }`}
         >
           {index + 1}
         </button>
@@ -54,12 +49,9 @@ const ListPagination = ({
 
       <button
         onClick={() => handlePaginationChange(offset + limit, limit)}
-        className={`rounded-r-lg border border-gray-300 bg-white px-3 py-2
-            leading-tight text-secondary-800 hover:bg-gray-100
-            hover:text-gray-700 dark:border-gray-700 dark:bg-gray-800
-            dark:text-gray-400 dark:hover:bg-gray-700 
-             dark:hover:text-white
-            `}
+        className={`rounded-r-lg border border-primary-300 bg-white px-3 py-2
+            leading-tight text-secondary-800 hover:bg-primary-100
+            hover:text-primary-700`}
       >
         Next
       </button>

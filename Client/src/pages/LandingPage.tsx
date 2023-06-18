@@ -3,9 +3,11 @@ import { useQuery } from "react-query";
 
 import { fetchPokemonList } from "../util/fetchPokemonList";
 import { PokemonType } from "../types/PokemonType";
+import randomPokemon from "../util/randomPokemon";
 import RandomizedCollage from "../components/RandomizedCollage";
 import LoadingScreen from "../components/LoadingScreen";
 import ErrorScreen from "../components/ErrorScreen";
+import PokemonImage from "../components/pokemon/PokemonVsImage";
 
 const LandingPage = () => {
   const {
@@ -25,12 +27,20 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (pokemonList && (!randomPokemon1 || !randomPokemon2)) {
-      const randomIndex1 = Math.floor(Math.random() * pokemonList.length);
-      const randomIndex2 = Math.floor(Math.random() * pokemonList.length);
-      setRandomPokemon1(pokemonList[randomIndex1]);
-      setRandomPokemon2(pokemonList[randomIndex2]);
+      setRandomPokemon1(randomPokemon(pokemonList));
+      setRandomPokemon2(randomPokemon(pokemonList));
     }
   }, [pokemonList, randomPokemon1, randomPokemon2]);
+
+  useEffect(() => {
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = "auto";
+      document.body.style.overflow = "auto";
+    };
+  }, []);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -42,34 +52,23 @@ const LandingPage = () => {
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center
-    justify-center bg-gray-900"
+      className="flex h-screen w-full flex-col
+      items-center justify-center bg-gray-900"
     >
-      <div className="relative z-10">
+      <div className="z-10">
         <div className="flex flex-col items-center rounded-lg bg-gray-800 p-8">
           <h1 className="mb-8 text-4xl font-bold text-white">
             Pokemon Battle Simulator
           </h1>
           <div className="mb-4 flex space-x-4">
             {randomPokemon1 && (
-              <div className="relative h-32 w-32">
-                <img
-                  src={randomPokemon1.sprite}
-                  alt={randomPokemon1.name}
-                  className="absolute inset-0 h-full w-full
-                  rounded-full object-cover ring-4 ring-red-600"
-                />
-              </div>
+              <PokemonImage pokemon={randomPokemon1} ringColor="ring-red-600" />
             )}
             {randomPokemon2 && (
-              <div className="relative h-32 w-32">
-                <img
-                  src={randomPokemon2.sprite}
-                  alt={randomPokemon2.name}
-                  className="absolute inset-0 h-full w-full
-                  rounded-full object-cover ring-4 ring-blue-600"
-                />
-              </div>
+              <PokemonImage
+                pokemon={randomPokemon2}
+                ringColor="ring-blue-600"
+              />
             )}
           </div>
           {randomPokemon1 && randomPokemon2 && (
@@ -81,16 +80,9 @@ const LandingPage = () => {
           )}
         </div>
       </div>
-      <div className="absolute inset-0 z-0 m-10 overflow-hidden">
+      <div className="width-full absolute z-0 h-screen overflow-hidden">
         <RandomizedCollage pokemonList={pokemonList} />
       </div>
-      <style>
-        {`
-        body {
-          overflow: hidden;
-        }
-        `}
-      </style>
     </div>
   );
 };

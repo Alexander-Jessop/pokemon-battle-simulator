@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 
 interface LoginFormData {
   email: string;
@@ -18,7 +18,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: ChangeEvent<HTMLInputElement>,
     field: keyof LoginFormData
   ) => {
     setFormData((prevData) => ({
@@ -27,7 +27,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
 
@@ -68,8 +68,8 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 
-            transform text-sm text-secondary-400"
+            className="absolute right-2 top-1/2 -translate-y-1/2
+            text-sm text-secondary-400"
           >
             {showPassword ? "Hide" : "Show"}
           </button>

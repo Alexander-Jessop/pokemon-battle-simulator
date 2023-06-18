@@ -8,6 +8,7 @@ interface Pokemon {
   id: number;
   name: string;
   sprites: {
+    back_default: string;
     other: {
       dream_world: {
         front_default: string;
@@ -15,7 +16,6 @@ interface Pokemon {
     };
   };
 }
-
 interface PokemonListResponse {
   results: {
     name: string;
@@ -24,6 +24,7 @@ interface PokemonListResponse {
 }
 
 export const getPokemon = async (req: Request, res: Response) => {
+  const POKEMON_API = "https://pokeapi.co/api/v2/pokemon?";
   try {
     let offset = 0;
     let limit = 10;
@@ -36,15 +37,12 @@ export const getPokemon = async (req: Request, res: Response) => {
       limit = parseInt(req.query.limit as string, 10);
     }
 
-    const response = await axios.get<PokemonListResponse>(
-      process.env.POKEMON_API as string,
-      {
-        params: {
-          offset,
-          limit,
-        },
-      }
-    );
+    const response = await axios.get<PokemonListResponse>(POKEMON_API, {
+      params: {
+        offset,
+        limit,
+      },
+    });
 
     const pokemonData = await Promise.all(
       response.data.results.map(async (pokemon) => {
@@ -54,6 +52,8 @@ export const getPokemon = async (req: Request, res: Response) => {
           id: data.id,
           name: data.name,
           sprite: data.sprites.other.dream_world.front_default,
+          battleSprite: data.sprites.back_default,
+          isInBattle: false,
         };
       })
     );

@@ -1,11 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
-
 import sessionConfig from "./dB/session-config.js";
 import pokemonRouter from "./routes/pokemonRoutes.js";
-// import battleRouter from "./routes/battleRoutes.js";
 import connectToDatabase from "./dB/db-connection.js";
 import userRoutes from "./routes/userRoutes.js";
+import battleRouter from "./routes/battleRoutes.js";
 
 dotenv.config();
 
@@ -21,8 +20,7 @@ app.get("/", (_req, res) => {
 sessionConfig(app);
 
 app.use("/api/users", userRoutes);
-
-// app.use("/api/battle", battleRouter);
+app.use("/api/battle", battleRouter);
 app.use("/api", pokemonRouter);
 
 connectToDatabase();

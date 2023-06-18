@@ -1,7 +1,5 @@
 import axios, { AxiosResponse } from "axios";
 
-const POKEMON_BATTLE_API: string = import.meta.env.VITE_POKEMON_BATTLEING_API;
-
 interface PokemonAttackData {
   sprites: string;
   types: string[];
@@ -11,8 +9,9 @@ interface PokemonAttackData {
 export const fetchPokemonAttack = async (
   pokemonId: number
 ): Promise<PokemonAttackData> => {
+  const POKEMON_BATTLE_API = "api/pokemon-list/";
   try {
-    const url = `${POKEMON_BATTLE_API}${pokemonId}`;
+    const url = POKEMON_BATTLE_API + pokemonId;
     const response: AxiosResponse<PokemonAttackData> = await axios.get(url);
     return response.data;
   } catch (error) {

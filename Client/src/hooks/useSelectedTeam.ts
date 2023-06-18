@@ -4,9 +4,9 @@ import { PokemonType } from "../types/PokemonType";
 
 export const useSelectedTeam = () => {
   const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
+  const maxSelectedPokemon = 6;
 
   const handlePokemonSelect = (pokemon: PokemonType) => {
-    const maxSelectedPokemon = 6;
     if (selectedTeam.length < maxSelectedPokemon) {
       setSelectedTeam((prevSelectedTeam: PokemonType[]) => [
         ...prevSelectedTeam,
@@ -31,7 +31,6 @@ export const useSelectedTeam = () => {
     ) {
       handleRemoveFromSelectedTeam(pokemon);
     } else {
-      const maxSelectedPokemon = 6;
       if (selectedTeam.length < maxSelectedPokemon) {
         handlePokemonSelect(pokemon);
       }
@@ -39,12 +38,12 @@ export const useSelectedTeam = () => {
   };
 
   const isReadyToBattle = () => {
-    const maxSelectedPokemon = 6;
     return selectedTeam.length === maxSelectedPokemon;
   };
 
   return {
     selectedTeam,
+    setSelectedTeam,
     handleSelectOrRemove,
     isReadyToBattle,
   };

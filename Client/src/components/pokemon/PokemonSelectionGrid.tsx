@@ -1,0 +1,31 @@
+import PokemonCard from "./PokemonCard";
+import { PokemonType } from "../../types/PokemonType";
+
+interface PokemonGridProps {
+  selectedTeam: PokemonType[];
+  handleSelectOrRemove: (pokemon: PokemonType) => void;
+}
+
+const PokemonGrid = ({
+  selectedTeam,
+  handleSelectOrRemove,
+}: PokemonGridProps) => {
+  return (
+    <div
+      className="grid grid-cols-1 justify-items-center gap-4
+      md:grid-cols-2 lg:grid-cols-3"
+    >
+      {selectedTeam.map((pokemon: PokemonType) => (
+        <div key={pokemon.id}>
+          <PokemonCard
+            pokemon={pokemon}
+            onSelect={() => handleSelectOrRemove(pokemon)}
+            isSelected={true}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default PokemonGrid;

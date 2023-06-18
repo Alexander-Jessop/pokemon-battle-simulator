@@ -43,7 +43,7 @@ const PokemonList = () => {
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
-        <h1 className="mb-5 mt-10 text-center text-4xl font-bold">
+        <h1 className="mt-5 text-center text-4xl font-bold">
           Choose your Pokemon
         </h1>
         <div className="m-10 flex max-w-8xl flex-wrap justify-center">
