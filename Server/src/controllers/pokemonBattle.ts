@@ -1,44 +1,42 @@
 import axios from "axios";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
-import { Session } from "express-session";
 
 dotenv.config();
 
-interface PokemonMove {
-  move: {
-    name: string;
-    url: string;
-  };
-}
-
 interface Pokemon {
-  id: number;
-  name: string;
-  sprites: {
-    other: {
-      dream_world: {
-        front_default: string;
-      };
-    };
-  };
-  types: {
-    type: {
-      name: string;
-    };
-  }[];
-  moves: PokemonMove[];
   stats: {
     base_stat: number;
+    effort: number;
     stat: {
       name: string;
+      url: string;
     };
   }[];
-}
-
-interface UserSession extends Session {
-  user?: any;
-  selectedPokemon?: any;
+  types: {
+    slot: number;
+    type: {
+      name: string;
+      url: string;
+    };
+  }[];
+  moves: {
+    move: {
+      name: string;
+      url: string;
+    };
+    version_group_details: {
+      level_learned_at: number;
+      move_learn_method: {
+        name: string;
+        url: string;
+      };
+      version_group: {
+        name: string;
+        url: string;
+      };
+    }[];
+  }[];
 }
 
 const fetchPokemon = async (pokemonId: string) => {
@@ -67,61 +65,52 @@ const determineFirstTurn = (userPokemon: Pokemon, computerPokemon: Pokemon) => {
 };
 
 export const pokemonBattle = async (req: Request, res: Response) => {
-  const userSelectedPokemon = (req.session as UserSession).selectedPokemon;
-  const computerSelectedPokemon = await fetchPokemon("1");
-
-  if (!userSelectedPokemon) {
-    return res.status(400).json({ error: "User's Pokemon not found" });
-  }
+  const { playerPokemonId, computerPokemonId } = req.params;
 
   try {
-    const userPokemon = await fetchPokemon(userSelectedPokemon.id.toString());
-    const computerPokemon = computerSelectedPokemon;
+    const playerPokemon = await fetchPokemon(playerPokemonId);
+    const computerPokemon = await fetchPokemon(computerPokemonId);
 
-    const userSprites = userPokemon.sprites.other.dream_world.front_default;
-    const computerSprites =
-      computerPokemon.sprites.other.dream_world.front_default;
-
-    const userTypes = userPokemon.types.map((type) => type.type.name);
+    const userTypes = playerPokemon.types.map((type) => type.type.name);
     const computerTypes = computerPokemon.types.map((type) => type.type.name);
 
-    const userMoves = userPokemon.moves
-      .slice(0, 4)
-      .map((move) => move.move.name);
-    const computerMoves = computerPokemon.moves
-      .slice(0, 4)
-      .map((move) => move.move.name);
+    const userMoves = playerPokemon.moves.slice(0, 4).map((move) => ({
+      name: move.move.name,
+      url: move.move.url,
+    }));
+    const computerMoves = computerPokemon.moves.slice(0, 4).map((move) => ({
+      name: move.move.name,
+      url: move.move.url,
+    }));
 
-    const userHealth = userPokemon.stats.find(
+    const userHealth = playerPokemon.stats.find(
       (stat) => stat.stat.name === "hp"
     )?.base_stat;
     const computerHealth = computerPokemon.stats.find(
       (stat) => stat.stat.name === "hp"
     )?.base_stat;
 
-    const firstTurn = determineFirstTurn(userPokemon, computerPokemon);
+    const firstTurn = determineFirstTurn(playerPokemon, computerPokemon);
 
-    res.json({
+    const battleData = {
       user: {
-        sprites: userSprites,
         types: userTypes,
         moves: userMoves,
         health: userHealth,
       },
       computer: {
-        sprites: computerSprites,
         types: computerTypes,
         moves: computerMoves,
         health: computerHealth,
       },
       firstTurn: firstTurn,
-    });
+    };
+
+    return res.json(battleData);
   } catch (error) {
     console.error("Error fetching Pokemon data:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
-
-  return res.status(500).json({ error: "Internal Server Error" });
 };
 
 interface Pokemon {
@@ -162,21 +151,106 @@ export const userSwitchPokemon = (req: CustomRequest, res: Response) => {
   }
 };
 
-export const computerSelectedPokemon = async () => {
-  const POKEMON_API = "https://pokeapi.co/api/v2/pokemon?";
-  const response = await axios.get(POKEMON_API + "limit=151");
-  const pokemonList = response.data.results;
-  const randomPokemon = [];
+export const computerSelectedPokemon = async (_req: Request, res: Response) => {
+  try {
+    const POKEMON_API = "https://pokeapi.co/api/v2/pokemon?";
+    const response = await axios.get(POKEMON_API + "limit=151");
+    const pokemonList = response.data.results;
 
-  while (randomPokemon.length < 6) {
-    const randomIndex = Math.floor(Math.random() * pokemonList.length);
-    const { data } = await axios.get(pokemonList[randomIndex].url);
-    randomPokemon.push({
-      id: data.id,
-      name: data.name,
-      sprite: data.sprites.front_default,
+    const randomPokemon = [];
+
+    while (randomPokemon.length < 6) {
+      const randomIndex = Math.floor(Math.random() * pokemonList.length);
+      const { data } = await axios.get(pokemonList[randomIndex].url);
+      randomPokemon.push({
+        id: data.id,
+        name: data.name,
+        sprite: data.sprites.front_default,
+        isInBattle: false,
+      });
+    }
+
+    return res.status(200).json(randomPokemon);
+  } catch (error) {
+    console.error("Error fetching computer-selected Pokemon:", error);
+    throw error;
+  }
+};
+
+export const calculateDamage = async (req: Request, res: Response) => {
+  try {
+    const { move, playerPokemon, compPokemon } = req.body;
+    const apiUrl = "https://pokeapi.co/api/v2/pokemon/";
+
+    const [moveResponse, playerPokemonResponse, compPokemonResponse] =
+      await Promise.all([
+        axios.get(move),
+        axios.get(apiUrl + playerPokemon),
+        axios.get(apiUrl + compPokemon),
+      ]);
+
+    const moveData = moveResponse.data;
+    const movePower = moveData.power;
+
+    const playerPokemonData = playerPokemonResponse.data;
+    const playerLevel = playerPokemonData.base_experience;
+    const playerAttack = playerPokemonData.stats[1].base_stat;
+
+    const compPokemonData = compPokemonResponse.data;
+    const compDefense = compPokemonData.stats[2].base_stat;
+
+    const damage =
+      Math.floor(
+        (((2 * playerLevel) / 5 + 2) * playerAttack * movePower) /
+          compDefense /
+          50
+      ) + 2;
+
+    res.json({ damage });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while calculating the damage." });
+  }
+};
+
+export const compDmg = async (req: Request, res: Response) => {
+  try {
+    const { playerPokemon, compPokemon } = req.body;
+    const apiUrl = "https://pokeapi.co/api/v2/pokemon/";
+
+    const [playerPokemonResponse, compPokemonResponse] = await Promise.all([
+      axios.get(apiUrl + playerPokemon),
+      axios.get(apiUrl + compPokemon),
+    ]);
+
+    const playerPokemonData = playerPokemonResponse.data;
+    const playerDefense = playerPokemonData.stats[2].base_stat;
+
+    const compPokemonData = compPokemonResponse.data;
+    const compLevel = compPokemonData.base_experience;
+    const compAttack = compPokemonData.stats[1].base_stat;
+    const compMoves = compPokemonData.moves.slice(0, 4);
+    const randomMoveIndex = Math.floor(Math.random() * compMoves.length);
+    const compMove = compMoves[randomMoveIndex];
+
+    const compMoveResponse = await axios.get(compMove.move.url);
+    const compMoveData = compMoveResponse.data;
+    const compMovePower = compMoveData.power;
+
+    const damage =
+      Math.floor(
+        (((2 * compLevel) / 5 + 2) * compAttack * compMovePower) /
+          (playerDefense * 1.25) /
+          50
+      ) + 2;
+
+    res.json({ damage });
+  } catch (error) {
+    console.error("Error calculating computer's damage:", error);
+    res.status(500).json({
+      error: "An error occurred while calculating the computer's damage.",
     });
   }
-
-  return randomPokemon;
 };

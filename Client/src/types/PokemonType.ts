@@ -4,4 +4,5 @@ export interface PokemonType {
   sprite: string;
   battleSprite: string;
   isInBattle: boolean;
+  isFainted: boolean;
 }

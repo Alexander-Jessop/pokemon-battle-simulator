@@ -11,7 +11,6 @@ export const postUserSwitchPokemon = async (
       selectedTeam,
       index,
     });
-    console.log("Pokemon switched successfully");
   } catch (error) {
     console.error("Failed to switch Pokemon:", error);
   }

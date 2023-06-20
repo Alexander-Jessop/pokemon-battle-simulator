@@ -54,6 +54,7 @@ export const getPokemon = async (req: Request, res: Response) => {
           sprite: data.sprites.other.dream_world.front_default,
           battleSprite: data.sprites.back_default,
           isInBattle: false,
+          isFainted: false,
         };
       })
     );

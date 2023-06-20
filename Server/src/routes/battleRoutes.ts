@@ -3,13 +3,17 @@ import {
   pokemonBattle,
   computerSelectedPokemon,
   userSwitchPokemon,
+  calculateDamage,
+  compDmg,
 } from "../controllers/pokemonBattle.js";
 
 const battleRouter = express.Router();
 
 battleRouter.post("/switch-player-pokemon", userSwitchPokemon);
+battleRouter.post("/attack", calculateDamage);
+battleRouter.post("/computer-attack", compDmg);
 
 battleRouter.get("/computer-pokemon", computerSelectedPokemon);
-battleRouter.get("/:id", pokemonBattle);
+battleRouter.get("/:playerPokemonId/:computerPokemonId", pokemonBattle);
 
 export default battleRouter;
