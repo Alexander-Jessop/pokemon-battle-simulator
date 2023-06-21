@@ -148,14 +148,14 @@ const BattlePage = () => {
 
   const handleMoveClick = async (
     move: string,
-    currentPokemon: number,
-    computerPokemon: number[]
+    currentPokemonId: number,
+    computerPokemonId: number
   ) => {
     try {
       const { damage } = await fetchPokemonDmg(
         move,
-        currentPokemon,
-        computerPokemon
+        currentPokemonId,
+        computerPokemonId
       );
 
       setComputerPokemonHP((prevHP) =>
@@ -167,32 +167,47 @@ const BattlePage = () => {
         setIsLunging(false);
       }, 500);
 
-      const { damage: compDamage } = await fetchCompPokeDmg(
-        currentPokemon,
-        computerPokemon
-      );
+      if (computerPokemonHP !== null && computerPokemonHP - damage <= 0) {
+        // Computer's Pokémon fainted, switch to the next Pokémon
+        const nextComputerPokemon = computerPokemon.slice(1);
+        if (nextComputerPokemon.length > 0) {
+          setComputerPokemon(nextComputerPokemon);
+          setComputerPokemonHP(nextComputerPokemon[0]?.health);
+        } else {
+          // No more Pokémon left, battle ends
+          setTimeout(() => {
+            alert("Congratulations! You win!");
+            // Handle battle end logic here (e.g., navigate to a victory screen)
+          }, 500);
+        }
+      } else {
+        // Computer attacks
+        const { damage: compDamage } = await fetchCompPokeDmg(
+          currentPokemonId,
+          computerPokemonId
+        );
 
-      setPlayerPokemonData((prevData) => {
-        if (prevData) {
-          const updatedData = { ...prevData };
-          updatedData.user.health -= compDamage;
+        setPlayerPokemonData((prevData) => {
+          if (prevData) {
+            const updatedData = { ...prevData };
+            updatedData.user.health -= compDamage;
 
-          if (updatedData.user.health <= 0) {
-            setTimeout(() => {
-              openSwitchMenu();
-            }, 500);
+            if (updatedData.user.health <= 0) {
+              setTimeout(() => {
+                openSwitchMenu();
+              }, 500);
+            }
 
             return updatedData;
           }
-        }
-        return prevData;
-      });
+          return prevData;
+        });
 
-      setIsComputerLunging(true);
-
-      setTimeout(() => {
-        setIsComputerLunging(false);
-      }, 500);
+        setIsComputerLunging(true);
+        setTimeout(() => {
+          setIsComputerLunging(false);
+        }, 500);
+      }
     } catch (error) {
       setError(error.message);
     }
