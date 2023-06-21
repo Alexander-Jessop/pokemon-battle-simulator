@@ -242,7 +242,7 @@ export const compDmg = async (req: Request, res: Response) => {
     const damage =
       Math.floor(
         (((2 * compLevel) / 5 + 2) * compAttack * compMovePower) /
-          (playerDefense * 1.25) /
+          (playerDefense * 2) /
           50
       ) + 2;
 
