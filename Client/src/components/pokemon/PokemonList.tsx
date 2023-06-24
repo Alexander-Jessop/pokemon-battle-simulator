@@ -1,8 +1,7 @@
-import { useQuery } from "react-query";
-
+import { useQuery, useQueryClient } from "react-query";
 import { fetchPokemonList } from "../../util/fetchPokemonList";
 import PokemonCard from "./PokemonCard";
-import { PokemonType } from "../../types/PokemonType";
+import { PokemonType, IApiPokeGen } from "../../types/PokemonType";
 import { useSelectedTeam } from "../../hooks/useSelectedTeam";
 import { usePagination } from "../../hooks/usePagination";
 import LoadingScreen from "../LoadingScreen";
@@ -10,27 +9,39 @@ import ErrorScreen from "../ErrorScreen";
 import ListPagination from "./ListPagination";
 
 const PokemonList = () => {
+  const queryClient = useQueryClient();
   const { selectedTeam, handleSelectOrRemove } = useSelectedTeam();
-  const { offset, limit, totalPages, currentPage, handlePaginationChange } =
-    usePagination(0, 10, 151, 151);
+  const {
+    currentPage,
+    currentLimit,
+    handlePageChange,
+    handleItemsPerPageChange,
+  } = usePagination(1, 10, 151, fetchData);
+
+  async function fetchData(page: number, limit: number) {
+    await queryClient.prefetchQuery(["pokemonList", page, limit], () =>
+      fetchPokemonList(1, page, limit)
+    );
+  }
 
   const {
-    data: pokemonList,
+    data: pokemonData,
     isLoading,
     isError,
     error,
-  } = useQuery<PokemonType[], Error>(["pokemonList", offset, limit], () =>
-    fetchPokemonList(offset, limit)
+  } = useQuery<IApiPokeGen, Error>(
+    ["pokemonList", currentPage, currentLimit],
+    () => fetchPokemonList(1, currentPage, currentLimit)
   );
 
-  const filteredPokemonList = pokemonList
-    ?.filter(
-      (pokemon: PokemonType) =>
-        !selectedTeam.some(
-          (selectedPokemon: PokemonType) => selectedPokemon.id === pokemon.id
-        )
-    )
-    ?.slice(0, limit);
+  const { data: pokemonList, pagination } = pokemonData || {
+    data: [],
+    pagination: {
+      currentPage: 1,
+      totalPages: 1,
+      totalItems: 0,
+    },
+  };
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -47,7 +58,7 @@ const PokemonList = () => {
           Choose your Pokemon
         </h1>
         <div className="m-10 flex max-w-8xl flex-wrap justify-center">
-          {filteredPokemonList?.map((pokemon: PokemonType) => (
+          {pokemonList.map((pokemon: PokemonType) => (
             <PokemonCard
               pokemon={pokemon}
               key={pokemon.id}
@@ -62,11 +73,11 @@ const PokemonList = () => {
       </div>
       <div className="mb-10">
         <ListPagination
-          limit={limit}
-          offset={offset}
-          totalPages={totalPages}
+          limit={currentLimit}
+          totalPages={pagination.totalPages}
           currentPage={currentPage}
-          handlePaginationChange={handlePaginationChange}
+          handlePageChange={handlePageChange}
+          handleItemsPerPageChange={handleItemsPerPageChange}
         />
       </div>
     </div>

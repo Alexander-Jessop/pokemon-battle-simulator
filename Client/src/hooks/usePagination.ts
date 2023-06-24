@@ -1,42 +1,36 @@
-import { useState, useContext } from "react";
-import { SelectedTeamContext } from "../context/SelectedTeamContext";
-import { PokemonType } from "../types/PokemonType";
+import { useState, useEffect } from "react";
 
 export const usePagination = (
-  initialOffset: number,
-  initialLimit: number,
-  maxOffset: number,
-  totalItems: number
+  initialPage = 1,
+  initialLimit = 10,
+  totalItems = 0,
+  fetchDataCallback
 ) => {
-  const [offset, setOffset] = useState<number>(initialOffset);
-  const [limit, setLimit] = useState<number>(initialLimit);
-  const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [currentLimit, setCurrentLimit] = useState(initialLimit);
+  const totalPages = Math.ceil(totalItems / currentLimit);
 
-  const totalPages = Math.ceil(totalItems / limit);
-  const currentPage = Math.floor(offset / limit) + 1;
+  useEffect(() => {
+    fetchDataCallback(currentPage, currentLimit);
+  }, [currentPage, currentLimit, fetchDataCallback]);
 
-  const handlePaginationChange = (newOffset: number, newLimit: number) => {
-    if (newOffset >= 0 && newOffset <= maxOffset) {
-      setOffset(newOffset);
-      if (newLimit < limit) {
-        const selectedPokemonIds = new Set(
-          selectedTeam.map((pokemon: PokemonType) => pokemon.id)
-        );
-        setSelectedTeam((prevSelectedTeam: PokemonType[]) =>
-          prevSelectedTeam.filter((selectedPokemon: PokemonType) =>
-            selectedPokemonIds.has(selectedPokemon.id)
-          )
-        );
-      }
-      setLimit(newLimit);
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleItemsPerPageChange = (newLimit) => {
+    if (newLimit >= 1) {
+      setCurrentLimit(newLimit);
     }
   };
 
   return {
-    offset,
-    limit,
-    totalPages,
     currentPage,
-    handlePaginationChange,
+    currentLimit,
+    totalPages,
+    handlePageChange,
+    handleItemsPerPageChange,
   };
 };

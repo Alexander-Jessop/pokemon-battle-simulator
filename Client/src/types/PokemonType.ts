@@ -1,8 +1,17 @@
+import { IPaginationInfo } from "./ApiType";
+
 export interface PokemonType {
   id: number;
   name: string;
   sprite: string;
-  battleSprite: string;
-  isInBattle: boolean;
-  isFainted: boolean;
+}
+export interface ISelPokeType {
+  id: number;
+  name: string;
+  sprite: string;
+}
+
+export interface IApiPokeGen {
+  data: ISelPokeType[];
+  pagination: IPaginationInfo;
 }

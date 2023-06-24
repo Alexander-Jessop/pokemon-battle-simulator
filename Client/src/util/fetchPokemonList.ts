@@ -1,15 +1,18 @@
 import axios, { AxiosResponse } from "axios";
-import { PokemonType } from "../types/PokemonType";
+import { IApiPokeGen } from "../types/PokemonType";
 
 export const fetchPokemonList = async (
-  offset: number,
-  limit: number
-): Promise<PokemonType[]> => {
-  const POKEMON_LIST_API = "api/pokemon-list";
+  generation: number,
+  page: number,
+  pageSize: number
+): Promise<IApiPokeGen> => {
+  const POKEMON_LIST_API = "/api/pokemon/selection-screen";
   try {
-    const response: AxiosResponse<PokemonType[]> = await axios.get(
-      `${POKEMON_LIST_API}?offset=${offset}&limit=${limit}`
+    const response: AxiosResponse<IApiPokeGen> = await axios.get(
+      `${POKEMON_LIST_API}?generation=${generation}&` +
+        `page=${page}&pageSize=${pageSize}`
     );
+
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch Pokemon list.");
