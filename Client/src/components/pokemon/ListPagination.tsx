@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { ChangeEvent, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 
 type PaginationProps = {
   limit: number;
@@ -7,6 +6,7 @@ type PaginationProps = {
   currentPage: number;
   handlePageChange: (page: number) => void;
   handleItemsPerPageChange: (limit: number) => void;
+  handleGenerationChange: (generation: number) => void;
 };
 
 const ListPagination = ({
@@ -15,8 +15,10 @@ const ListPagination = ({
   currentPage,
   handlePageChange,
   handleItemsPerPageChange,
+  handleGenerationChange,
 }: PaginationProps) => {
   const [currentLimit, setCurrentLimit] = useState(limit);
+  const [currentGeneration, setCurrentGeneration] = useState(1);
 
   useEffect(() => {
     setCurrentLimit(limit);
@@ -40,6 +42,14 @@ const ListPagination = ({
     handleItemsPerPageChange(newLimit);
   };
 
+  const handleGenerationSelectionChange = (
+    e: ChangeEvent<HTMLSelectElement>
+  ) => {
+    const newGeneration = parseInt(e.target.value, 10);
+    setCurrentGeneration(newGeneration);
+    handleGenerationChange(newGeneration);
+  };
+
   useEffect(() => {
     handleItemsPerPageChange(currentLimit);
   }, [currentLimit, handleItemsPerPageChange]);
@@ -56,6 +66,20 @@ const ListPagination = ({
         <option value={20}>20</option>
         <option value={50}>50</option>
       </select>
+
+      <span>Generation:</span>
+      <select
+        value={currentGeneration}
+        onChange={handleGenerationSelectionChange}
+        className="rounded-md border border-primary-300 bg-white px-2 py-1"
+      >
+        <option value={1}>1</option>
+        <option value={2}>2</option>
+        <option value={3}>3</option>
+        <option value={4}>4</option>
+        <option value={5}>5</option>
+      </select>
+
       <button
         onClick={handlePreviousPage}
         disabled={currentPage === 1}

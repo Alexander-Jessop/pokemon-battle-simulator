@@ -7,6 +7,7 @@ import { usePagination } from "../../hooks/usePagination";
 import LoadingScreen from "../LoadingScreen";
 import ErrorScreen from "../ErrorScreen";
 import ListPagination from "./ListPagination";
+import { prefetchPokemonList } from "../../util/pokeApi";
 
 const PokemonList = () => {
   const queryClient = useQueryClient();
@@ -14,14 +15,14 @@ const PokemonList = () => {
   const {
     currentPage,
     currentLimit,
+    currentGeneration,
     handlePageChange,
     handleItemsPerPageChange,
-  } = usePagination(1, 10, 151, fetchData);
+    handleGenerationChange,
+  } = usePagination(1, 10, 151, 1, prefetchData);
 
-  async function fetchData(page: number, limit: number) {
-    await queryClient.prefetchQuery(["pokemonList", page, limit], () =>
-      fetchPokemonList(1, page, limit)
-    );
+  async function prefetchData(page: number, limit: number) {
+    await prefetchPokemonList(queryClient, currentGeneration, page, limit);
   }
 
   const {
@@ -30,8 +31,8 @@ const PokemonList = () => {
     isError,
     error,
   } = useQuery<IApiPokeGen, Error>(
-    ["pokemonList", currentPage, currentLimit],
-    () => fetchPokemonList(1, currentPage, currentLimit)
+    ["pokemonList", currentPage, currentLimit, currentGeneration],
+    () => fetchPokemonList(currentGeneration, currentPage, currentLimit)
   );
 
   const { data: pokemonList, pagination } = pokemonData || {
@@ -51,12 +52,14 @@ const PokemonList = () => {
     return <ErrorScreen message={error.toString()} />;
   }
 
-  const filteredPokemonList = pokemonList.filter(
-    (pokemon: PokemonType) =>
-      !selectedTeam.some(
-        (selectedPokemon: PokemonType) => selectedPokemon.id === pokemon.id
+  const filteredPokemonList = pokemonList
+    ? pokemonList.filter(
+        (pokemon: PokemonType) =>
+          !selectedTeam.some(
+            (selectedPokemon: PokemonType) => selectedPokemon.id === pokemon.id
+          )
       )
-  );
+    : [];
 
   return (
     <div>
@@ -83,8 +86,10 @@ const PokemonList = () => {
           limit={currentLimit}
           totalPages={pagination.totalPages}
           currentPage={currentPage}
+          currentGeneration={currentGeneration}
           handlePageChange={handlePageChange}
           handleItemsPerPageChange={handleItemsPerPageChange}
+          handleGenerationChange={handleGenerationChange}
         />
       </div>
     </div>
