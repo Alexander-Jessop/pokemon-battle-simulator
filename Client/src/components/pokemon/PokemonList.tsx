@@ -51,6 +51,13 @@ const PokemonList = () => {
     return <ErrorScreen message={error.toString()} />;
   }
 
+  const filteredPokemonList = pokemonList.filter(
+    (pokemon: PokemonType) =>
+      !selectedTeam.some(
+        (selectedPokemon: PokemonType) => selectedPokemon.id === pokemon.id
+      )
+  );
+
   return (
     <div>
       <div className="flex flex-col items-center justify-center">
@@ -58,7 +65,7 @@ const PokemonList = () => {
           Choose your Pokemon
         </h1>
         <div className="m-10 flex max-w-8xl flex-wrap justify-center">
-          {pokemonList.map((pokemon: PokemonType) => (
+          {filteredPokemonList.map((pokemon: PokemonType) => (
             <PokemonCard
               pokemon={pokemon}
               key={pokemon.id}
