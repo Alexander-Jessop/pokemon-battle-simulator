@@ -104,6 +104,7 @@ export default {
       animation: {
         "slide-in": "slide-in 1s ease-in-out forwards",
         "lunge-right": "lunge 0.2s ease-in-out forwards",
+        "fade-in": "fade-in 0.5s ease-in-out forwards",
       },
       keyframes: {
         "slide-in": {
@@ -125,6 +126,16 @@ export default {
           },
           "100%": {
             transform: "translateX(0) translateY(0)",
+          },
+        },
+        "fade-in": {
+          "0%": {
+            opacity: 0,
+            transform: "translateY(-50px)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateY(0)",
           },
         },
       },

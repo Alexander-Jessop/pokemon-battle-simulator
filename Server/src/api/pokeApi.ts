@@ -13,15 +13,15 @@ export const fetchPokemonByGeneration = async (generation: number) => {
   }
 };
 
-export const fetchPokemonByName = async (name: string) => {
+export const fetchPokemonByNameOrId = async (identifier: string | number) => {
   try {
     const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${name}`
+      `https://pokeapi.co/api/v2/pokemon/${identifier}`
     );
 
     return response.data;
   } catch (error) {
-    console.error("Error fetching Pokémon by name:", error);
+    console.error("Error fetching Pokémon by identifier:", error);
     throw error;
   }
 };

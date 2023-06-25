@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IApiPokeGen } from "../types/PokemonType";
+import { IApiPokeGen, IPokeDetails } from "../types/PokemonType";
 
 export const fetchPokemonList = async (
   generation: number,
@@ -16,5 +16,23 @@ export const fetchPokemonList = async (
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch Pokemon list.");
+  }
+};
+
+export const fetchPokemonDetails = async (
+  identifiers: string[] | number[]
+): Promise<IPokeDetails> => {
+  const POKEMON_DETAILS_API = "/api/pokemon/pokemon-data";
+  try {
+    const response: AxiosResponse<IPokeDetails> = await axios.post(
+      POKEMON_DETAILS_API,
+      {
+        identifiers: identifiers,
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch Pokemon details.");
   }
 };

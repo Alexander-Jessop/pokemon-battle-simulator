@@ -20,11 +20,10 @@ app.get("/", (_req, res) => {
 sessionConfig(app);
 
 // new routes
-app.use("/api/pokemon", pokemonRouter)
+app.use("/api/pokemon", pokemonRouter);
 
 app.use("/api/users", userRoutes);
 app.use("/api/battle", battleRouter);
-app.use("/api", pokemonRouter);
 
 connectToDatabase();
 

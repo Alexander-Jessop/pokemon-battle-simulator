@@ -6,13 +6,23 @@ type FetchDataCallback = (
   generation: number
 ) => Promise<void>;
 
+type PaginationResult = {
+  currentPage: number;
+  currentLimit: number;
+  totalPages: number;
+  currentGeneration: number;
+  handlePageChange: (page: number) => void;
+  handleItemsPerPageChange: (newLimit: number) => void;
+  handleGenerationChange: (generation: number) => void;
+};
+
 export const usePagination = (
   initialPage = 1,
   initialLimit = 10,
   totalItems = 0,
   initialGeneration = 1,
   fetchDataCallback: FetchDataCallback
-) => {
+): PaginationResult => {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [currentLimit, setCurrentLimit] = useState(initialLimit);
   const [currentGeneration, setCurrentGeneration] = useState(initialGeneration);
@@ -35,6 +45,7 @@ export const usePagination = (
   };
 
   const handleGenerationChange = (generation: number) => {
+    setCurrentPage(1);
     setCurrentGeneration(generation);
   };
 

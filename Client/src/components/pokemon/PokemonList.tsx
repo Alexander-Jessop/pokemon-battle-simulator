@@ -18,7 +18,7 @@ const PokemonList = () => {
     currentGeneration,
     handlePageChange,
     handleItemsPerPageChange,
-    handleGenerationChange,
+    handleGenerationChange: paginationHandleGenerationChange,
   } = usePagination(1, 10, 151, 1, prefetchData);
 
   async function prefetchData(page: number, limit: number) {
@@ -89,7 +89,7 @@ const PokemonList = () => {
           currentGeneration={currentGeneration}
           handlePageChange={handlePageChange}
           handleItemsPerPageChange={handleItemsPerPageChange}
-          handleGenerationChange={handleGenerationChange}
+          handleGenerationChange={paginationHandleGenerationChange}
         />
       </div>
     </div>
