@@ -6,8 +6,12 @@ import SelectedPokemonSection from "../components/pokemon/SelectedPokemonSection
 const SelectPokemonPage = () => {
   const BATTLE_PATH = "/battle";
   const navigate = useNavigate();
-  const { selectedTeam, handleSelectOrRemove, isReadyToBattle } =
-    useSelectedTeam();
+  const {
+    selectedTeam,
+    handleSelectOrRemove,
+    removeAllPokemon,
+    isReadyToBattle,
+  } = useSelectedTeam();
 
   const handleReadyToBattle = () => {
     navigate(BATTLE_PATH);
@@ -19,6 +23,7 @@ const SelectPokemonPage = () => {
         <SelectedPokemonSection
           selectedTeam={selectedTeam}
           handleSelectOrRemove={handleSelectOrRemove}
+          removeAllPokemon={removeAllPokemon}
           isReadyToBattle={isReadyToBattle}
           onReadyToBattle={handleReadyToBattle}
         />

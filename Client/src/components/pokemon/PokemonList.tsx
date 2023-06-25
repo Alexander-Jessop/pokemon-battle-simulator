@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "react-query";
 import { fetchPokemonList } from "../../util/fetchPokemonList";
 import PokemonCard from "./PokemonCard";
-import { PokemonType, IApiPokeGen } from "../../types/PokemonType";
+import { ISelPokeType, IApiPokeGen } from "../../types/PokemonType";
 import { useSelectedTeam } from "../../hooks/useSelectedTeam";
 import { usePagination } from "../../hooks/usePagination";
 import LoadingScreen from "../LoadingScreen";
@@ -54,9 +54,9 @@ const PokemonList = () => {
 
   const filteredPokemonList = pokemonList
     ? pokemonList.filter(
-        (pokemon: PokemonType) =>
+        (pokemon: ISelPokeType) =>
           !selectedTeam.some(
-            (selectedPokemon: PokemonType) => selectedPokemon.id === pokemon.id
+            (selectedPokemon: ISelPokeType) => selectedPokemon.id === pokemon.id
           )
       )
     : [];
@@ -68,13 +68,13 @@ const PokemonList = () => {
           Choose your Pokemon
         </h1>
         <div className="m-10 flex max-w-8xl flex-wrap justify-center">
-          {filteredPokemonList.map((pokemon: PokemonType) => (
+          {filteredPokemonList.map((pokemon: ISelPokeType) => (
             <PokemonCard
               pokemon={pokemon}
               key={pokemon.id}
               onSelect={() => handleSelectOrRemove(pokemon)}
               isSelected={selectedTeam.some(
-                (selectedPokemon: PokemonType) =>
+                (selectedPokemon: ISelPokeType) =>
                   selectedPokemon.id === pokemon.id
               )}
             />

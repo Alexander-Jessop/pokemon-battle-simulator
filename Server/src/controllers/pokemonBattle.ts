@@ -1,8 +1,9 @@
 import axios from "axios";
-import dotenv from "dotenv";
 import { Request, Response } from "express";
-
-dotenv.config();
+import randNumGen from "../helpers/randNumGen.js";
+import generatePokemonData from "../helpers/generatePokemonData.js";
+import Battle from "../models/battleModel.js";
+import generateUUID from "../helpers/generateUUID.js";
 
 interface Pokemon {
   stats: {
@@ -252,5 +253,47 @@ export const compDmg = async (req: Request, res: Response) => {
     res.status(500).json({
       error: "An error occurred while calculating the computer's damage.",
     });
+  }
+};
+
+export const gameState = async (req: Request, res: Response) => {
+  const battleId = generateUUID();
+
+  try {
+    const playerPokemon = req.body.playerPokemon;
+    const playerPokemonData = await generatePokemonData(playerPokemon);
+
+    const randomPokemon: number[] = [];
+    while (randomPokemon.length < 6) {
+      randomPokemon.push(randNumGen(1, 649));
+    }
+
+    const computerPokemonData = await generatePokemonData(randomPokemon);
+
+    const playerFirstPokemonSpeed = playerPokemonData[0].stats.speed;
+    const computerFirstPokemonSpeed = computerPokemonData[0].stats.speed;
+
+    playerPokemonData[0].isInBattle = true;
+    computerPokemonData[0].isInBattle = true;
+
+    const battleData = {
+      id: battleId,
+      playerPokemon: playerPokemonData,
+      computerPokemon: computerPokemonData,
+      currentPlayer:
+        playerFirstPokemonSpeed >= computerFirstPokemonSpeed ? 1 : 0,
+      turn: 1,
+      status: "ongoing",
+      winner: undefined,
+      log: [],
+    };
+
+    const battle = new Battle(battleData);
+    await battle.save();
+
+    res.status(200).json(battleData);
+  } catch (error) {
+    console.error("Error fetching player Pokémon:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

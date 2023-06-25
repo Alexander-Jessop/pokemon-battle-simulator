@@ -23,6 +23,10 @@ export const useSelectedTeam = () => {
     );
   };
 
+  const removeAllPokemon = () => {
+    setSelectedTeam([]);
+  };
+
   const handleSelectOrRemove = (pokemon: ISelPokeType) => {
     if (
       selectedTeam.some(
@@ -45,6 +49,7 @@ export const useSelectedTeam = () => {
     selectedTeam,
     setSelectedTeam,
     handleSelectOrRemove,
+    removeAllPokemon,
     isReadyToBattle,
   };
 };

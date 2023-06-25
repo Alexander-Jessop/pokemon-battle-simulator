@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PokemonImage from "./pokemon/PokemonVsImage";
 import { IPokeDetails } from "../types/PokemonType";
 import { Link } from "react-router-dom";

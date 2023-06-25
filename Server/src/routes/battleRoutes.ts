@@ -5,9 +5,12 @@ import {
   userSwitchPokemon,
   calculateDamage,
   compDmg,
+  gameState,
 } from "../controllers/pokemonBattle.js";
 
 const battleRouter = express.Router();
+
+battleRouter.post("/game-state", gameState);
 
 battleRouter.post("/switch-player-pokemon", userSwitchPokemon);
 battleRouter.post("/attack", calculateDamage);
