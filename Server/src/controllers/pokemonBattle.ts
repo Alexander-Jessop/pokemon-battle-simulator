@@ -1,258 +1,55 @@
-import axios from "axios";
 import { Request, Response } from "express";
 import randNumGen from "../helpers/randNumGen.js";
 import generatePokemonData from "../helpers/generatePokemonData.js";
 import Battle from "../models/battleModel.js";
 import generateUUID from "../helpers/generateUUID.js";
+import { fetchMoveDetails } from "../api/pokeApi.js";
+import calculateDamageDealt from "../helpers/calculateDamageDealt.js";
 
-interface Pokemon {
-  stats: {
-    base_stat: number;
-    effort: number;
-    stat: {
-      name: string;
-      url: string;
-    };
-  }[];
-  types: {
-    slot: number;
-    type: {
-      name: string;
-      url: string;
-    };
-  }[];
-  moves: {
-    move: {
-      name: string;
-      url: string;
-    };
-    version_group_details: {
-      level_learned_at: number;
-      move_learn_method: {
-        name: string;
-        url: string;
-      };
-      version_group: {
-        name: string;
-        url: string;
-      };
-    }[];
-  }[];
-}
-
-const fetchPokemon = async (pokemonId: string) => {
-  const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
-  const response = await axios.get<Pokemon>(url);
-  return response.data;
-};
-
-const determineFirstTurn = (userPokemon: Pokemon, computerPokemon: Pokemon) => {
-  const userSpeed = userPokemon.stats.find(
-    (stat) => stat.stat.name === "speed"
-  )?.base_stat;
-  const computerSpeed = computerPokemon.stats.find(
-    (stat) => stat.stat.name === "speed"
-  )?.base_stat;
-
-  if (userSpeed && computerSpeed) {
-    if (userSpeed > computerSpeed) {
-      return "user";
-    } else if (userSpeed < computerSpeed) {
-      return "computer";
-    }
-  }
-
-  return "user";
-};
-
-export const pokemonBattle = async (req: Request, res: Response) => {
-  const { playerPokemonId, computerPokemonId } = req.params;
+export const switchPokemon = async (req: Request, res: Response) => {
+  const battleId = req.params.battleId;
+  const selectedPokemonId = req.params.pokemonId;
 
   try {
-    const playerPokemon = await fetchPokemon(playerPokemonId);
-    const computerPokemon = await fetchPokemon(computerPokemonId);
-
-    const userTypes = playerPokemon.types.map((type) => type.type.name);
-    const computerTypes = computerPokemon.types.map((type) => type.type.name);
-
-    const userMoves = playerPokemon.moves.slice(0, 4).map((move) => ({
-      name: move.move.name,
-      url: move.move.url,
-    }));
-    const computerMoves = computerPokemon.moves.slice(0, 4).map((move) => ({
-      name: move.move.name,
-      url: move.move.url,
-    }));
-
-    const userHealth = playerPokemon.stats.find(
-      (stat) => stat.stat.name === "hp"
-    )?.base_stat;
-    const computerHealth = computerPokemon.stats.find(
-      (stat) => stat.stat.name === "hp"
-    )?.base_stat;
-
-    const firstTurn = determineFirstTurn(playerPokemon, computerPokemon);
-
-    const battleData = {
-      user: {
-        types: userTypes,
-        moves: userMoves,
-        health: userHealth,
-      },
-      computer: {
-        types: computerTypes,
-        moves: computerMoves,
-        health: computerHealth,
-      },
-      firstTurn: firstTurn,
-    };
-
-    return res.json(battleData);
-  } catch (error) {
-    console.error("Error fetching Pokemon data:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-interface Pokemon {
-  id: number;
-  name: string;
-  sprite: string;
-  battleSprite: string;
-  isInBattle: boolean;
-}
-
-interface CustomRequest extends Request {
-  body: {
-    selectedTeam: Pokemon[];
-    index: number;
-  };
-}
-
-export const userSwitchPokemon = (req: CustomRequest, res: Response) => {
-  try {
-    const { selectedTeam, index } = req.body;
-
-    if (selectedTeam && selectedTeam.length > 0) {
-      const activePokemonIndex = selectedTeam.findIndex(
-        (pokemon) => pokemon.isInBattle
-      );
-      if (activePokemonIndex !== -1) {
-        selectedTeam[activePokemonIndex].isInBattle = false;
-      }
-      selectedTeam[index].isInBattle = true;
+    const battle = await Battle.findById(battleId);
+    if (!battle) {
+      res.status(404).json({ error: "Battle not found" });
+      return;
     }
 
-    return res
-      .status(200)
-      .json({ message: "Pokémon switched successfully", selectedTeam });
-  } catch (error) {
-    console.error("Failed to switch Pokémon:", error);
-    return res.status(500).json({ message: "Failed to switch Pokémon" });
-  }
-};
+    const playerPokemon = battle.playerPokemon;
 
-export const computerSelectedPokemon = async (_req: Request, res: Response) => {
-  try {
-    const POKEMON_API = "https://pokeapi.co/api/v2/pokemon?";
-    const response = await axios.get(POKEMON_API + "limit=151");
-    const pokemonList = response.data.results;
+    const activePlayerPokemon = playerPokemon.find(
+      (pokemon) => pokemon.isInBattle
+    );
 
-    const randomPokemon = [];
-
-    while (randomPokemon.length < 6) {
-      const randomIndex = Math.floor(Math.random() * pokemonList.length);
-      const { data } = await axios.get(pokemonList[randomIndex].url);
-      randomPokemon.push({
-        id: data.id,
-        name: data.name,
-        sprite: data.sprites.front_default,
-        isInBattle: false,
-      });
+    if (!activePlayerPokemon) {
+      res.status(400).json({ error: "Invalid battle state" });
+      return;
     }
 
-    return res.status(200).json(randomPokemon);
+    if (selectedPokemonId === activePlayerPokemon.id) {
+      res.status(400).json({ error: "Selected Pokémon is already in battle" });
+      return;
+    }
+
+    activePlayerPokemon.isInBattle = false;
+
+    const selectedPlayerPokemon = playerPokemon.find(
+      (pokemon) => pokemon.id === selectedPokemonId
+    );
+    if (!selectedPlayerPokemon) {
+      res.status(404).json({ error: "Selected Pokémon not found" });
+      return;
+    }
+    selectedPlayerPokemon.isInBattle = true;
+
+    await battle.save();
+
+    res.status(200).json(battle);
   } catch (error) {
-    console.error("Error fetching computer-selected Pokemon:", error);
-    throw error;
-  }
-};
-
-export const calculateDamage = async (req: Request, res: Response) => {
-  try {
-    const { move, playerPokemon, compPokemon } = req.body;
-    const apiUrl = "https://pokeapi.co/api/v2/pokemon/";
-
-    const [moveResponse, playerPokemonResponse, compPokemonResponse] =
-      await Promise.all([
-        axios.get(move),
-        axios.get(apiUrl + playerPokemon),
-        axios.get(apiUrl + compPokemon),
-      ]);
-
-    const moveData = moveResponse.data;
-    const movePower = moveData.power;
-
-    const playerPokemonData = playerPokemonResponse.data;
-    const playerLevel = playerPokemonData.base_experience;
-    const playerAttack = playerPokemonData.stats[1].base_stat;
-
-    const compPokemonData = compPokemonResponse.data;
-    const compDefense = compPokemonData.stats[2].base_stat;
-
-    const damage =
-      Math.floor(
-        (((2 * playerLevel) / 5 + 2) * playerAttack * movePower) /
-          compDefense /
-          50
-      ) + 2;
-
-    res.json({ damage });
-  } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while calculating the damage." });
-  }
-};
-
-export const compDmg = async (req: Request, res: Response) => {
-  try {
-    const { playerPokemon, compPokemon } = req.body;
-    const apiUrl = "https://pokeapi.co/api/v2/pokemon/";
-
-    const [playerPokemonResponse, compPokemonResponse] = await Promise.all([
-      axios.get(apiUrl + playerPokemon),
-      axios.get(apiUrl + compPokemon),
-    ]);
-
-    const playerPokemonData = playerPokemonResponse.data;
-    const playerDefense = playerPokemonData.stats[2].base_stat;
-
-    const compPokemonData = compPokemonResponse.data;
-    const compLevel = compPokemonData.base_experience;
-    const compAttack = compPokemonData.stats[1].base_stat;
-    const compMoves = compPokemonData.moves.slice(0, 4);
-    const randomMoveIndex = Math.floor(Math.random() * compMoves.length);
-    const compMove = compMoves[randomMoveIndex];
-
-    const compMoveResponse = await axios.get(compMove.move.url);
-    const compMoveData = compMoveResponse.data;
-    const compMovePower = compMoveData.power;
-
-    const damage =
-      Math.floor(
-        (((2 * compLevel) / 5 + 2) * compAttack * compMovePower) /
-          (playerDefense * 2) /
-          50
-      ) + 2;
-
-    res.json({ damage });
-  } catch (error) {
-    console.error("Error calculating computer's damage:", error);
-    res.status(500).json({
-      error: "An error occurred while calculating the computer's damage.",
-    });
+    console.error("Error switching Pokémon:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -295,5 +92,51 @@ export const gameState = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching player Pokémon:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const pokemonAttack = async (req: Request, res: Response) => {
+  try {
+    const moveUrl = req.body.moveUrl;
+    const battleId = req.body.battleId;
+    const isPlayer = req.body.isPlayer;
+
+    const battle = await Battle.findOne({ id: battleId });
+
+    if (!battle) {
+      return res.status(404).json({ error: "Battle not found" });
+    }
+
+    const activePokemon = isPlayer
+      ? battle.playerPokemon.find((pokemon) => pokemon.isInBattle)
+      : battle.computerPokemon.find((pokemon) => pokemon.isInBattle);
+
+    const opponentPokemon = isPlayer
+      ? battle.computerPokemon.find((pokemon) => pokemon.isInBattle)
+      : battle.playerPokemon.find((pokemon) => pokemon.isInBattle);
+
+    if (!opponentPokemon || !activePokemon) {
+      return res.status(400).json({ error: "No active  Pokemon found" });
+    }
+
+    const moveData = await fetchMoveDetails(moveUrl);
+    const damage = calculateDamageDealt(
+      activePokemon,
+      opponentPokemon,
+      moveData
+    );
+
+    opponentPokemon.damage += damage;
+
+    if (opponentPokemon.damage >= opponentPokemon.stats.hp) {
+      opponentPokemon.isFainted = true;
+    }
+
+    await battle.save();
+
+    return res.status(200).json({ message: "Attack successful" });
+  } catch (error) {
+    console.error("Error during attack:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

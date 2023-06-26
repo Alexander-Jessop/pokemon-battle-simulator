@@ -25,3 +25,14 @@ export const fetchPokemonByNameOrId = async (identifier: string | number) => {
     throw error;
   }
 };
+
+export const fetchMoveDetails = async (moveUrl: string) => {
+  try {
+    const response = await axios.get(moveUrl);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching move details:", error);
+    throw error;
+  }
+};

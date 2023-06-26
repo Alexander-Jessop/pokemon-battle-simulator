@@ -3,6 +3,12 @@ export interface IPokeSpec {
   url: string;
 }
 
+export interface IPokePlayer {
+  id: number;
+  name: string;
+  sprite: string;
+}
+
 export interface ISelectPoke {
   id: number;
   name: string;
@@ -15,18 +21,28 @@ export interface ISelectPoke {
   };
 }
 
+export interface IStat {
+  base_stat: number;
+  effort: number;
+  stat: {
+    name: string;
+    url: string;
+  };
+}
+
+export interface IType {
+  slot: number;
+  type: {
+    name: string;
+    url: string;
+  };
+}
+
 export interface IPokemonInfo {
   id: number;
   name: string;
-  types: string[];
-  stats: {
-    hp: number;
-    attack: number;
-    defense: number;
-    specialAttack: number;
-    specialDefense: number;
-    speed: number;
-  };
+  types: IType[];
+  stats: IStat[];
   moves: {
     name: string;
     type: string;
@@ -37,4 +53,14 @@ export interface IPokemonInfo {
     front_default: string;
     back_default: string;
   };
+}
+
+export interface IMoveData {
+  name: string;
+  type: {
+    name: string;
+    url: string;
+  };
+  power: number | null;
+  accuracy: number | null;
 }

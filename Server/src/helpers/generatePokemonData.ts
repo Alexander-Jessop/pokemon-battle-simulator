@@ -10,6 +10,8 @@ const generatePokemonData = async (pokemonList: (IPokePlayer | number)[]) => {
         ? (pokemonData = await fetchPokemonByNameOrId(pokemon.name))
         : (pokemonData = await fetchPokemonByNameOrId(pokemon));
 
+      pokemonData.moves = pokemonData.moves.slice(0, 4);
+
       return {
         ...pokemonData,
         isInBattle: false,
