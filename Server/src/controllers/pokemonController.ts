@@ -25,9 +25,6 @@ export const getPokemon = async (req: Request, res: Response) => {
           stats: response.data.stats,
           moves: response.data.moves,
           sprites: response.data.sprites,
-          isInBattle: false,
-          isFainted: false,
-          damage: 0,
         };
       })
     );

@@ -16,7 +16,7 @@ export interface IPokeDetails {
   name: string;
   types: { type: { name: string } }[];
   stats: { base_stat: number; stat: { name: string } }[];
-  moves: { move: { name: string } }[];
+  moves: { move: { name: string; url: string } }[];
   sprites: {
     other: { dream_world: { front_default: string } };
     front_default: string;
