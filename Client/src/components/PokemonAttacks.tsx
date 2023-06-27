@@ -1,11 +1,15 @@
 import { IBattleData } from "../types/ApiType";
 import patchPokemonAttack from "../util/patchPokemonAttack";
+import { useGameState } from "../context/GameStateContext";
+import fetchGameState from "../util/fetchGameState";
 
 interface PropsData {
   pokeData: IBattleData;
+  isPlayerTurn: boolean;
 }
 
-const PokemonAttacks = ({ pokeData }: PropsData) => {
+const PokemonAttacks = ({ pokeData, isPlayerTurn }: PropsData) => {
+  const { setGameState } = useGameState();
   const currentPokemon = pokeData.playerPokemon.find(
     (pokemon) => pokemon.isInBattle
   );
@@ -19,8 +23,13 @@ const PokemonAttacks = ({ pokeData }: PropsData) => {
   ) => {
     try {
       await patchPokemonAttack(moveUrl, battleId, isPlayer);
+
+      const response = await fetchGameState(battleId);
+      const updatedGameState = response.data;
+
+      setGameState(updatedGameState);
     } catch (error) {
-      console.error("Failed to perform attack:", error);
+      throw new Error("Failed to perform attack:");
     }
   };
 
@@ -34,6 +43,7 @@ const PokemonAttacks = ({ pokeData }: PropsData) => {
           onClick={() =>
             handleAttack(move.move.url, pokeData.id, pokeData.currentPlayer)
           }
+          disabled={!isPlayerTurn}
         >
           {move.move.name}
         </button>

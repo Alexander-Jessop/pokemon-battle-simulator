@@ -6,15 +6,18 @@ import LoadingScreen from "../components/LoadingScreen";
 import ErrorScreen from "../components/ErrorScreen";
 import GameContainer from "../components/GameContainer";
 import SelectedBattlePokemon from "../components/pokemon/SelectedBattlePokemon";
-import { IBattleData } from "../types/ApiType";
+import { useGameState } from "../context/GameStateContext";
+import patchPokemonAttack from "../util/patchPokemonAttack";
+import fetchGameState from "../util/fetchGameState";
 
 const PokemonStadium = () => {
+  const { gameState, setGameState } = useGameState();
   const { selectedTeam } = useSelectedTeam();
   const navigate = useNavigate();
   const [isPosted, setIsPosted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [gameState, setGameState] = useState<IBattleData | null>(null);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
 
   const isPostedRef = useRef(isPosted);
 
@@ -28,6 +31,9 @@ const PokemonStadium = () => {
           const response = await postGameState(selectedTeam);
           setGameState(response);
           setIsPosted(true);
+
+          const currentPlayer = response.currentPlayer;
+          setIsPlayerTurn(currentPlayer === 1);
           console.log("response", response);
         } catch (error) {
           setError("Failed to post game state");
@@ -42,6 +48,39 @@ const PokemonStadium = () => {
     }
   }, [selectedTeam, navigate]);
 
+  useEffect(() => {
+    const computerAttack = async () => {
+      if (!isPlayerTurn && gameState?.currentPlayer === 0) {
+        const computerPokemon = gameState.computerPokemon.find(
+          (pokemon) => pokemon.isInBattle
+        );
+        const moveIndex = Math.floor(
+          Math.random() * (computerPokemon?.moves.length ?? 0)
+        );
+        const move = computerPokemon?.moves[moveIndex];
+
+        if (move) {
+          try {
+            await patchPokemonAttack(
+              move.move.url,
+              gameState.id,
+              gameState.currentPlayer
+            );
+
+            const response = await fetchGameState(gameState.id);
+            const updatedGameState = response.data;
+
+            setGameState(updatedGameState);
+          } catch (error) {
+            setError("Failed to perform computer attack");
+          }
+        }
+      }
+    };
+
+    computerAttack();
+  }, [isPlayerTurn, gameState, setGameState]);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -53,7 +92,7 @@ const PokemonStadium = () => {
   return (
     <div>
       {gameState && (
-        <GameContainer pokeData={gameState}>
+        <GameContainer pokeData={gameState} isPlayerTurn={isPlayerTurn}>
           <SelectedBattlePokemon
             pokeData={gameState.computerPokemon}
             isLunging={false}

@@ -108,57 +108,77 @@ export const pokemonAttack = async (req: Request, res: Response) => {
     const moveUrl = req.body.moveUrl;
     const battleId = req.body.battleId;
     const isPlayer = req.body.isPlayer;
-
     const battle = await Battle.findOne({ id: battleId });
 
     if (!battle) {
       return res.status(404).json({ error: "Battle not found" });
     }
 
-    const activePokemonIndex = isPlayer
+    const attackingPokemonIndex = isPlayer
       ? battle.playerPokemon.findIndex((pokemon) => pokemon.isInBattle)
       : battle.computerPokemon.findIndex((pokemon) => pokemon.isInBattle);
 
-    const opponentPokemonIndex = isPlayer
+    const defendingPokemonIndex = isPlayer
       ? battle.computerPokemon.findIndex((pokemon) => pokemon.isInBattle)
       : battle.playerPokemon.findIndex((pokemon) => pokemon.isInBattle);
 
-    if (activePokemonIndex === -1 || opponentPokemonIndex === -1) {
+    if (attackingPokemonIndex === -1 || defendingPokemonIndex === -1) {
       return res.status(400).json({ error: "No active Pokemon found" });
     }
 
-    const activePokemon = battle.playerPokemon[activePokemonIndex];
-    const opponentPokemon = battle.computerPokemon[opponentPokemonIndex];
-    const getHpStat = opponentPokemon.stats.find(
+    const attackingPokemon = isPlayer
+      ? battle.playerPokemon[attackingPokemonIndex]
+      : battle.computerPokemon[attackingPokemonIndex];
+    const defendingPokemon = isPlayer
+      ? battle.computerPokemon[defendingPokemonIndex]
+      : battle.playerPokemon[defendingPokemonIndex];
+
+    const getHpStat = defendingPokemon.stats.find(
       (stat: IStat) => stat.stat.name === "hp"
     );
     const opponentPokemonHP = getHpStat ? getHpStat.base_stat : 0;
 
     const moveData = await fetchMoveDetails(moveUrl);
     const damage = calculateDamageDealt(
-      activePokemon,
-      opponentPokemon,
+      attackingPokemon,
+      defendingPokemon,
       moveData
     );
 
-    opponentPokemon.damage += damage;
+    defendingPokemon.damage += damage;
 
-    if (opponentPokemon.damage >= opponentPokemonHP) {
-      opponentPokemon.isFainted = true;
+    if (defendingPokemon.damage >= opponentPokemonHP) {
+      defendingPokemon.isFainted = true;
     }
+
+    isPlayer
+      ? (battle.computerPokemon[defendingPokemonIndex] = defendingPokemon)
+      : (battle.playerPokemon[defendingPokemonIndex] = defendingPokemon);
 
     battle.currentPlayer = isPlayer ? 0 : 1;
     battle.turn += 1;
-
-    isPlayer
-      ? (battle.computerPokemon[opponentPokemonIndex] = opponentPokemon)
-      : (battle.playerPokemon[opponentPokemonIndex] = opponentPokemon);
 
     await battle.save();
 
     return res.status(200).json({ message: "Attack successful" });
   } catch (error) {
     console.error("Error during attack:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const getGameState = async (req: Request, res: Response) => {
+  const battleId = req.params.battleId;
+
+  try {
+    const battle = await Battle.findOne({ id: battleId });
+    if (!battle) {
+      return res.status(404).json({ error: "Battle not found" });
+    }
+
+    return res.status(200).json(battle);
+  } catch (error) {
+    console.error("Error fetching battle:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
