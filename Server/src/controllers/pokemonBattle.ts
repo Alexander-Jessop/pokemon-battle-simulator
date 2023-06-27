@@ -150,7 +150,9 @@ export const pokemonAttack = async (req: Request, res: Response) => {
     battle.currentPlayer = isPlayer ? 0 : 1;
     battle.turn += 1;
 
-    battle.computerPokemon[opponentPokemonIndex] = opponentPokemon;
+    isPlayer
+      ? (battle.computerPokemon[opponentPokemonIndex] = opponentPokemon)
+      : (battle.playerPokemon[opponentPokemonIndex] = opponentPokemon);
 
     await battle.save();
 

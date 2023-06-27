@@ -18,8 +18,7 @@ const PokemonAttacks = ({ pokeData }: PropsData) => {
     isPlayer: number
   ) => {
     try {
-      const res = await patchPokemonAttack(moveUrl, battleId, isPlayer);
-      console.log("res", res);
+      await patchPokemonAttack(moveUrl, battleId, isPlayer);
     } catch (error) {
       console.error("Failed to perform attack:", error);
     }
