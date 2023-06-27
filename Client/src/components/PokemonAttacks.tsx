@@ -1,16 +1,25 @@
-import { IPokeDetails } from "../types/PokemonType";
+import { IBattleData } from "../types/ApiType";
+import patchPokemonAttack from "../util/patchPokemonAttack";
 
 interface PropsData {
-  pokeData: IPokeDetails[];
+  pokeData: IBattleData;
 }
 
 const PokemonAttacks = ({ pokeData }: PropsData) => {
-  const currentPokemon = pokeData.find((pokemon) => pokemon.isInBattle);
+  const currentPokemon = pokeData.playerPokemon.find(
+    (pokemon) => pokemon.isInBattle
+  );
 
   const moves = currentPokemon?.moves ?? [];
 
-  const handleAttack = async (moveUrl: string) => {
+  const handleAttack = async (
+    moveUrl: string,
+    battleId: string,
+    isPlayer: number
+  ) => {
     try {
+      const res = await patchPokemonAttack(moveUrl, battleId, isPlayer);
+      console.log("res", res);
     } catch (error) {
       console.error("Failed to perform attack:", error);
     }
@@ -23,7 +32,9 @@ const PokemonAttacks = ({ pokeData }: PropsData) => {
           key={move.move.name}
           className="m-2 min-w-[10rem] rounded-lg bg-primary-200 p-2
           text-white shadow"
-          onClick={() => handleAttack(move.move.url)}
+          onClick={() =>
+            handleAttack(move.move.url, pokeData.id, pokeData.currentPlayer)
+          }
         >
           {move.move.name}
         </button>

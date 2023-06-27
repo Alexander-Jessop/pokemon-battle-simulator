@@ -53,7 +53,7 @@ const PokemonStadium = () => {
   return (
     <div>
       {gameState && (
-        <GameContainer pokeData={gameState.playerPokemon}>
+        <GameContainer pokeData={gameState}>
           <SelectedBattlePokemon
             pokeData={gameState.computerPokemon}
             isLunging={false}

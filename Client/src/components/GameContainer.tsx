@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import PokemonAttacks from "../components/PokemonAttacks";
-import { IPokeDetails } from "../types/PokemonType";
+import { IBattleData } from "../types/ApiType";
 
 interface GameContainerProps {
   children: ReactNode;
-  pokeData: IPokeDetails[];
+  pokeData: IBattleData;
 }
 
 const GameContainer = ({ children, pokeData }: GameContainerProps) => {
