@@ -8,49 +8,51 @@ import calculateDamageDealt from "../helpers/calculateDamageDealt.js";
 import { IStat } from "../types/pokeTypes.js";
 
 export const switchPokemon = async (req: Request, res: Response) => {
-  const battleId = req.params.battleId;
-  const selectedPokemonId = req.params.pokemonId;
+  const { battleId, pokemonId } = req.body;
 
   try {
-    const battle = await Battle.findById(battleId);
+    const battle = await Battle.findOne({ id: battleId });
     if (!battle) {
-      res.status(404).json({ error: "Battle not found" });
-      return;
+      return res.status(404).json({ error: "Battle not found" });
     }
 
-    const playerPokemon = battle.playerPokemon;
-
-    const activePlayerPokemon = playerPokemon.find(
+    const activePokemonIndex = battle.playerPokemon.findIndex(
       (pokemon) => pokemon.isInBattle
     );
 
-    if (!activePlayerPokemon) {
-      res.status(400).json({ error: "Invalid battle state" });
-      return;
-    }
-
-    if (selectedPokemonId === activePlayerPokemon.id) {
-      res.status(400).json({ error: "Selected Pokémon is already in battle" });
-      return;
-    }
-
-    activePlayerPokemon.isInBattle = false;
-
-    const selectedPlayerPokemon = playerPokemon.find(
-      (pokemon) => pokemon.id === selectedPokemonId
+    const newActivePokemonIndex = battle.playerPokemon.findIndex(
+      (pokemon) => pokemon.id === pokemonId
     );
-    if (!selectedPlayerPokemon) {
-      res.status(404).json({ error: "Selected Pokémon not found" });
-      return;
+
+    if (activePokemonIndex === -1 || newActivePokemonIndex === -1) {
+      return res.status(400).json({ error: "Pokémon not found" });
     }
-    selectedPlayerPokemon.isInBattle = true;
+
+    battle.playerPokemon[activePokemonIndex] = {
+      ...battle.playerPokemon[activePokemonIndex],
+      isInBattle: false,
+    };
+
+    battle.playerPokemon[newActivePokemonIndex] = {
+      ...battle.playerPokemon[newActivePokemonIndex],
+      isInBattle: true,
+    };
+
+    battle.currentPlayer = 0;
+    battle.turn++;
+
+    battle.log.push({
+      message: `${battle.playerPokemon[newActivePokemonIndex].name} is now in battle and  ${battle.playerPokemon[activePokemonIndex].name} is switched out.`,
+      turn: battle.turn,
+      timestamp: new Date().toISOString(),
+    });
 
     await battle.save();
 
-    res.status(200).json(battle);
+    return res.status(200).json(battle);
   } catch (error) {
     console.error("Error switching Pokémon:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -90,7 +92,13 @@ export const gameState = async (req: Request, res: Response) => {
       turn: 1,
       status: "ongoing",
       winner: undefined,
-      log: [],
+      log: [
+        {
+          message: `Battle started`,
+          turn: 0,
+          timestamp: new Date().toISOString(),
+        },
+      ],
     };
 
     const battle = new Battle(battleData);
@@ -156,7 +164,29 @@ export const pokemonAttack = async (req: Request, res: Response) => {
       : (battle.playerPokemon[defendingPokemonIndex] = defendingPokemon);
 
     battle.currentPlayer = isPlayer ? 0 : 1;
-    battle.turn += 1;
+    battle.turn++;
+
+    if (battle.computerPokemon.every((pokemon) => pokemon.isFainted)) {
+      battle.status = "finished";
+      battle.winner = "player";
+    } else if (battle.playerPokemon.every((pokemon) => pokemon.isFainted)) {
+      battle.status = "finished";
+      battle.winner = "computer";
+    }
+
+    battle.log.push({
+      message: `${attackingPokemon.name} used ${
+        moveData.name
+      } and dealt ${damage} damage to ${defendingPokemon.name}${
+        defendingPokemon.isFainted ? " and fainted." : ""
+      }${
+        battle.status === "finished"
+          ? ` winner: ${battle.winner}, all Pokemon have fainted`
+          : ""
+      }`,
+      turn: battle.turn,
+      timestamp: new Date().toISOString(),
+    });
 
     await battle.save();
 
@@ -179,6 +209,57 @@ export const getGameState = async (req: Request, res: Response) => {
     return res.status(200).json(battle);
   } catch (error) {
     console.error("Error fetching battle:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const switchComputerPokemon = async (req: Request, res: Response) => {
+  try {
+    const battleId = req.body.battleId;
+    const battle = await Battle.findOne({ id: battleId });
+
+    if (!battle) {
+      return res.status(404).json({ error: "Battle not found" });
+    }
+
+    const activePokemonIndex = battle.computerPokemon.findIndex(
+      (pokemon) => pokemon.isInBattle
+    );
+
+    if (activePokemonIndex === -1) {
+      return res.status(400).json({ error: "No active Pokemon found" });
+    }
+
+    const newActivePokemonIndex = activePokemonIndex + 1;
+
+    if (newActivePokemonIndex >= battle.computerPokemon.length) {
+      return res.status(400).json({ error: "No Pokemon to switch to" });
+    }
+
+    battle.computerPokemon[activePokemonIndex] = {
+      ...battle.computerPokemon[activePokemonIndex],
+      isInBattle: false,
+    };
+
+    battle.computerPokemon[newActivePokemonIndex] = {
+      ...battle.computerPokemon[newActivePokemonIndex],
+      isInBattle: true,
+    };
+
+    battle.currentPlayer = 1;
+    battle.turn++;
+
+    battle.log.push({
+      message: `${battle.computerPokemon[newActivePokemonIndex].name} is now in battle and ${battle.computerPokemon[activePokemonIndex].name} is switched out.`,
+      turn: battle.turn,
+      timestamp: new Date().toISOString(),
+    });
+
+    await battle.save();
+
+    return res.status(200).json(battle);
+  } catch (error) {
+    console.error("Error switching Pokémon:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

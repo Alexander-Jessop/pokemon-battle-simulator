@@ -7,8 +7,8 @@ const battleSchema = new mongoose.Schema({
   currentPlayer: { type: Number, required: true },
   turn: { type: Number, required: true },
   status: { type: String, required: true },
-  winner: { type: Number, required: false },
-  log: { type: Array, required: false },
+  winner: { type: String, required: false },
+  log: { type: Array, required: true },
 });
 
 const Battle = mongoose.model("Battle", battleSchema);

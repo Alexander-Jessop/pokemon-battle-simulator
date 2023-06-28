@@ -9,6 +9,7 @@ import SelectedBattlePokemon from "../components/pokemon/SelectedBattlePokemon";
 import { useGameState } from "../context/GameStateContext";
 import patchPokemonAttack from "../util/patchPokemonAttack";
 import fetchGameState from "../util/fetchGameState";
+import patchComputerSwitchPokemon from "../util/patchComputerSwitchPokemon";
 
 const PokemonStadium = () => {
   const { gameState, setGameState } = useGameState();
@@ -31,9 +32,6 @@ const PokemonStadium = () => {
           const response = await postGameState(selectedTeam);
           setGameState(response);
           setIsPosted(true);
-
-          const currentPlayer = response.currentPlayer;
-          setIsPlayerTurn(currentPlayer === 1);
           console.log("response", response);
         } catch (error) {
           setError("Failed to post game state");
@@ -45,8 +43,13 @@ const PokemonStadium = () => {
         initGameState();
         isPostedRef.current = true;
       }
+
+      if (gameState) {
+        const currentPlayer = gameState.currentPlayer;
+        setIsPlayerTurn(currentPlayer === 1);
+      }
     }
-  }, [selectedTeam, navigate]);
+  }, [selectedTeam, gameState, navigate]);
 
   useEffect(() => {
     const computerAttack = async () => {
@@ -59,7 +62,7 @@ const PokemonStadium = () => {
         );
         const move = computerPokemon?.moves[moveIndex];
 
-        if (move) {
+        if (move && !computerPokemon.isFainted) {
           try {
             await patchPokemonAttack(
               move.move.url,
@@ -75,11 +78,31 @@ const PokemonStadium = () => {
             setError("Failed to perform computer attack");
           }
         }
+
+        if (computerPokemon?.isFainted) {
+          try {
+            await patchComputerSwitchPokemon(gameState.id);
+
+            const response = await fetchGameState(gameState.id);
+            const updatedGameState = response.data;
+
+            setGameState(updatedGameState);
+          } catch (error) {
+            setError("Failed to switch computer's Pokémon");
+          }
+        }
       }
     };
 
-    computerAttack();
+    const delay = 1500;
+    const timeoutId = setTimeout(computerAttack, delay);
+
+    return () => clearTimeout(timeoutId);
   }, [isPlayerTurn, gameState, setGameState]);
+
+  const shouldOpenSwitchMenu = gameState?.playerPokemon.some(
+    (pokemon) => pokemon.isInBattle && pokemon.isFainted
+  );
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -92,7 +115,11 @@ const PokemonStadium = () => {
   return (
     <div>
       {gameState && (
-        <GameContainer pokeData={gameState} isPlayerTurn={isPlayerTurn}>
+        <GameContainer
+          pokeData={gameState}
+          isPlayerTurn={isPlayerTurn}
+          isSwitchMenuOpen={shouldOpenSwitchMenu || false}
+        >
           <SelectedBattlePokemon
             pokeData={gameState.computerPokemon}
             isLunging={false}

@@ -39,7 +39,7 @@ const PokemonAttacks = ({ pokeData, isPlayerTurn }: PropsData) => {
         <button
           key={move.move.name}
           className="m-2 min-w-[10rem] rounded-lg bg-primary-200 p-2
-          text-white shadow"
+          capitalize text-white shadow"
           onClick={() =>
             handleAttack(move.move.url, pokeData.id, pokeData.currentPlayer)
           }
