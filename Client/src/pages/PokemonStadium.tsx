@@ -10,15 +10,18 @@ import { useGameState } from "../context/GameStateContext";
 import patchPokemonAttack from "../util/patchPokemonAttack";
 import fetchGameState from "../util/fetchGameState";
 import patchComputerSwitchPokemon from "../util/patchComputerSwitchPokemon";
+import WinnerPopUp from "../components/WinnerPopUp";
+import { deleteGameStateData } from "../util/deleteGameStateData";
 
 const PokemonStadium = () => {
   const { gameState, setGameState } = useGameState();
-  const { selectedTeam } = useSelectedTeam();
+  const { selectedTeam, setSelectedTeam } = useSelectedTeam();
   const navigate = useNavigate();
   const [isPosted, setIsPosted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+  const [gameFinished, setGameFinished] = useState(false);
 
   const isPostedRef = useRef(isPosted);
 
@@ -27,12 +30,12 @@ const PokemonStadium = () => {
       navigate("/pokemon-selection", { state: { redirect: true } });
     } else {
       const initGameState = async () => {
+        setGameFinished(false);
         setIsLoading(true);
         try {
           const response = await postGameState(selectedTeam);
           setGameState(response);
           setIsPosted(true);
-          console.log("response", response);
         } catch (error) {
           setError("Failed to post game state");
         }
@@ -50,6 +53,12 @@ const PokemonStadium = () => {
       }
     }
   }, [selectedTeam, gameState, navigate]);
+
+  useEffect(() => {
+    if (gameState?.status === "finished") {
+      setGameFinished(true);
+    }
+  }, [gameState]);
 
   useEffect(() => {
     const computerAttack = async () => {
@@ -112,6 +121,22 @@ const PokemonStadium = () => {
     return <ErrorScreen message={error} />;
   }
 
+  const handleGameFinishedClose = async () => {
+    try {
+      if (gameState && gameState.id) {
+        await deleteGameStateData(gameState.id);
+        setGameState(null);
+        setSelectedTeam([]);
+        setGameFinished(false);
+        navigate("/pokemon-selection");
+      } else {
+        setError("Invalid game state");
+      }
+    } catch (error) {
+      setError("Failed to delete game state");
+    }
+  };
+
   return (
     <div>
       {gameState && (
@@ -131,6 +156,10 @@ const PokemonStadium = () => {
             isLunging={false}
           />
         </GameContainer>
+      )}
+
+      {gameFinished && gameState && (
+        <WinnerPopUp gameState={gameState} onClose={handleGameFinishedClose} />
       )}
     </div>
   );

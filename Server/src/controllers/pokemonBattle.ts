@@ -233,7 +233,8 @@ export const switchComputerPokemon = async (req: Request, res: Response) => {
     const newActivePokemonIndex = activePokemonIndex + 1;
 
     if (newActivePokemonIndex >= battle.computerPokemon.length) {
-      return res.status(400).json({ error: "No Pokemon to switch to" });
+      // Return the currently active Pokemon if there is no Pokemon to switch to
+      return res.status(200).json(battle);
     }
 
     battle.computerPokemon[activePokemonIndex] = {
@@ -260,6 +261,23 @@ export const switchComputerPokemon = async (req: Request, res: Response) => {
     return res.status(200).json(battle);
   } catch (error) {
     console.error("Error switching Pokémon:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const deleteBattle = async (req: Request, res: Response) => {
+  try {
+    const battleId = req.params.battleId;
+
+    const result = await Battle.deleteOne({ id: battleId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Battle not found" });
+    }
+
+    return res.status(200).json({ message: "Battle deleted" });
+  } catch (error) {
+    console.error("Error deleting battle:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

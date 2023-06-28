@@ -6,6 +6,12 @@ export interface IPaginationInfo {
   totalItems: number;
 }
 
+export interface ILogs {
+  message: string;
+  turn: number;
+  timestamp: string;
+}
+
 export interface IBattleData {
   id: string;
   playerPokemon: IPokeDetails[];
@@ -14,5 +20,5 @@ export interface IBattleData {
   turn: number;
   status: string;
   winner?: number;
-  log?: any[];
+  log: ILogs[];
 }

@@ -1,8 +1,8 @@
-import { PokemonType } from "../../types/PokemonType";
+import { ISelPokeType } from "../../types/PokemonType";
 
 interface Props {
-  pokemon: PokemonType;
-  onSelect: (pokemon: PokemonType) => void;
+  pokemon: ISelPokeType;
+  onSelect: (pokemon: ISelPokeType) => void;
   isSelected: boolean;
 }
 
@@ -14,8 +14,9 @@ const PokemonCard = ({ pokemon, onSelect, isSelected }: Props) => {
   if (isSelected) {
     return (
       <div
-        className="overflow-hidden rounded-lg bg-primary-600 shadow-lg
-      transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+        className="min-w-[25rem] overflow-hidden rounded-lg bg-primary-600
+      shadow-lg transition duration-300 hover:-translate-y-1
+      hover:shadow-xl"
       >
         <div className="relative m-4 flex items-center justify-between">
           <div className="flex items-center">
@@ -34,7 +35,8 @@ const PokemonCard = ({ pokemon, onSelect, isSelected }: Props) => {
             </h3>
           </div>
           <button
-            className="ml-2 grow bg-primary-400 px-4 py-2 font-bold text-white
+            className="ml-2 max-w-[8rem] grow rounded bg-primary-400 px-4 py-2
+            font-bold text-white
             hover:bg-primary-200"
             onClick={handleSelect}
           >

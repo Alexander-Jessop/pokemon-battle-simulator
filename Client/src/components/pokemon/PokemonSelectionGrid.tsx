@@ -1,9 +1,9 @@
 import PokemonCard from "./PokemonCard";
-import { PokemonType } from "../../types/PokemonType";
+import { ISelPokeType } from "../../types/PokemonType";
 
 interface PokemonGridProps {
-  selectedTeam: PokemonType[];
-  handleSelectOrRemove: (pokemon: PokemonType) => void;
+  selectedTeam: ISelPokeType[];
+  handleSelectOrRemove: (pokemon: ISelPokeType) => void;
 }
 
 const PokemonGrid = ({
@@ -15,7 +15,7 @@ const PokemonGrid = ({
       className="grid grid-cols-1 justify-items-center gap-4
       md:grid-cols-2 lg:grid-cols-3"
     >
-      {selectedTeam.map((pokemon: PokemonType) => (
+      {selectedTeam.map((pokemon: ISelPokeType) => (
         <div key={pokemon.id}>
           <PokemonCard
             pokemon={pokemon}
