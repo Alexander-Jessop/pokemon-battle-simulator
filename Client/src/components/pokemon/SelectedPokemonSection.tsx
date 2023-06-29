@@ -1,9 +1,10 @@
-import { PokemonType } from "../../types/PokemonType";
+import { ISelPokeType } from "../../types/PokemonType";
 import PokemonGrid from "./PokemonSelectionGrid";
 
 interface SelectedPokemonSectionProps {
-  selectedTeam: PokemonType[];
-  handleSelectOrRemove: (pokemon: PokemonType) => void;
+  selectedTeam: ISelPokeType[];
+  handleSelectOrRemove: (pokemon: ISelPokeType) => void;
+  removeAllPokemon: () => void;
   isReadyToBattle: () => boolean;
   onReadyToBattle: () => void;
 }
@@ -11,6 +12,7 @@ interface SelectedPokemonSectionProps {
 const SelectedPokemonSection = ({
   selectedTeam,
   handleSelectOrRemove,
+  removeAllPokemon,
   isReadyToBattle,
   onReadyToBattle,
 }: SelectedPokemonSectionProps) => {
@@ -27,8 +29,15 @@ const SelectedPokemonSection = ({
         selectedTeam={selectedTeam}
         handleSelectOrRemove={handleSelectOrRemove}
       />
-      {isReadyToBattle() && (
-        <div className="mt-4 flex justify-center">
+      <div className="mt-4 flex justify-center">
+        <button
+          className="mr-2 rounded bg-red-500 px-4 py-2
+              text-white hover:bg-red-600"
+          onClick={removeAllPokemon}
+        >
+          Remove All
+        </button>
+        {isReadyToBattle() && (
           <button
             className="rounded bg-blue-500 px-4 py-2 text-white
               hover:bg-blue-600"
@@ -36,8 +45,8 @@ const SelectedPokemonSection = ({
           >
             Ready to Battle
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

@@ -1,11 +1,15 @@
-import React, { createContext, useState, ReactNode } from "react";
-import { PokemonType } from "../types/PokemonType";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  SetStateAction,
+  Dispatch,
+} from "react";
+import { ISelPokeType } from "../types/PokemonType";
 
 interface SelectedTeamContextType {
-  selectedTeam: PokemonType[];
-  setSelectedTeam:
-    | React.Dispatch<React.SetStateAction<PokemonType[]>>
-    | ((team: PokemonType[]) => void);
+  selectedTeam: ISelPokeType[];
+  setSelectedTeam: Dispatch<SetStateAction<ISelPokeType[]>>;
 }
 
 export const SelectedTeamContext = createContext<SelectedTeamContextType>({
@@ -20,7 +24,7 @@ interface SelectedTeamProviderProps {
 export const SelectedTeamProvider = ({
   children,
 }: SelectedTeamProviderProps) => {
-  const [selectedTeam, setSelectedTeam] = useState<PokemonType[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<ISelPokeType[]>([]);
   return (
     <SelectedTeamContext.Provider value={{ selectedTeam, setSelectedTeam }}>
       {children}

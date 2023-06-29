@@ -1,42 +1,62 @@
-import { useState, useContext } from "react";
-import { SelectedTeamContext } from "../context/SelectedTeamContext";
-import { PokemonType } from "../types/PokemonType";
+import { useState, useEffect } from "react";
+
+type FetchDataCallback = (
+  page: number,
+  limit: number,
+  generation: number
+) => Promise<void>;
+
+type PaginationResult = {
+  currentPage: number;
+  currentLimit: number;
+  totalPages: number;
+  currentGeneration: number;
+  handlePageChange: (page: number) => void;
+  handleItemsPerPageChange: (newLimit: number) => void;
+  handleGenerationChange: (generation: number) => void;
+};
 
 export const usePagination = (
-  initialOffset: number,
-  initialLimit: number,
-  maxOffset: number,
-  totalItems: number
-) => {
-  const [offset, setOffset] = useState<number>(initialOffset);
-  const [limit, setLimit] = useState<number>(initialLimit);
-  const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
+  initialPage = 1,
+  initialLimit = 10,
+  totalItems = 0,
+  initialGeneration = 1,
+  fetchDataCallback: FetchDataCallback
+): PaginationResult => {
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [currentLimit, setCurrentLimit] = useState(initialLimit);
+  const [currentGeneration, setCurrentGeneration] = useState(initialGeneration);
+  const totalPages = Math.ceil(totalItems / currentLimit);
 
-  const totalPages = Math.ceil(totalItems / limit);
-  const currentPage = Math.floor(offset / limit) + 1;
+  useEffect(() => {
+    fetchDataCallback(currentPage, currentLimit, currentGeneration);
+  }, [currentPage, currentLimit, currentGeneration, fetchDataCallback]);
 
-  const handlePaginationChange = (newOffset: number, newLimit: number) => {
-    if (newOffset >= 0 && newOffset <= maxOffset) {
-      setOffset(newOffset);
-      if (newLimit < limit) {
-        const selectedPokemonIds = new Set(
-          selectedTeam.map((pokemon: PokemonType) => pokemon.id)
-        );
-        setSelectedTeam((prevSelectedTeam: PokemonType[]) =>
-          prevSelectedTeam.filter((selectedPokemon: PokemonType) =>
-            selectedPokemonIds.has(selectedPokemon.id)
-          )
-        );
-      }
-      setLimit(newLimit);
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
     }
   };
 
+  const handleItemsPerPageChange = (newLimit: number) => {
+    currentPage > totalPages
+      ? setCurrentPage(totalPages)
+      : setCurrentPage(currentPage);
+    setCurrentLimit(newLimit);
+  };
+
+  const handleGenerationChange = (generation: number) => {
+    setCurrentPage(1);
+    setCurrentGeneration(generation);
+  };
+
   return {
-    offset,
-    limit,
-    totalPages,
     currentPage,
-    handlePaginationChange,
+    currentLimit,
+    totalPages,
+    currentGeneration,
+    handlePageChange,
+    handleItemsPerPageChange,
+    handleGenerationChange,
   };
 };

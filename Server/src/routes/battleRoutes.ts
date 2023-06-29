@@ -1,19 +1,23 @@
 import express from "express";
 import {
-  pokemonBattle,
-  computerSelectedPokemon,
-  userSwitchPokemon,
-  calculateDamage,
-  compDmg,
+  switchPokemon,
+  gameState,
+  pokemonAttack,
+  getGameState,
+  switchComputerPokemon,
+  deleteBattle,
 } from "../controllers/pokemonBattle.js";
 
 const battleRouter = express.Router();
 
-battleRouter.post("/switch-player-pokemon", userSwitchPokemon);
-battleRouter.post("/attack", calculateDamage);
-battleRouter.post("/computer-attack", compDmg);
+battleRouter.get("/game-state/:battleId", getGameState);
 
-battleRouter.get("/computer-pokemon", computerSelectedPokemon);
-battleRouter.get("/:playerPokemonId/:computerPokemonId", pokemonBattle);
+battleRouter.post("/game-state", gameState);
+
+battleRouter.patch("/attack", pokemonAttack);
+battleRouter.patch("/switch-player-pokemon", switchPokemon);
+battleRouter.patch("/switch-computer-pokemon", switchComputerPokemon);
+
+battleRouter.delete("/game-state/:battleId", deleteBattle);
 
 export default battleRouter;

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { SelectedTeamProvider } from "./context/SelectedTeamContext.tsx";
+import { GameStateProvider } from "./context/GameStateContext.tsx";
 
 import App from "./App.tsx";
 import "./index.css";
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <SelectedTeamProvider>
-          <App />
+          <GameStateProvider>
+            <App />
+          </GameStateProvider>
         </SelectedTeamProvider>
       </BrowserRouter>
     </QueryClientProvider>

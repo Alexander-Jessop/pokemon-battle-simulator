@@ -1,32 +1,36 @@
 import { useContext } from "react";
 import { SelectedTeamContext } from "../context/SelectedTeamContext";
-import { PokemonType } from "../types/PokemonType";
+import { ISelPokeType } from "../types/PokemonType";
 
 export const useSelectedTeam = () => {
   const { selectedTeam, setSelectedTeam } = useContext(SelectedTeamContext);
   const maxSelectedPokemon = 6;
 
-  const handlePokemonSelect = (pokemon: PokemonType) => {
+  const handlePokemonSelect = (pokemon: ISelPokeType) => {
     if (selectedTeam.length < maxSelectedPokemon) {
-      setSelectedTeam((prevSelectedTeam: PokemonType[]) => [
+      setSelectedTeam((prevSelectedTeam: ISelPokeType[]) => [
         ...prevSelectedTeam,
         pokemon,
       ]);
     }
   };
 
-  const handleRemoveFromSelectedTeam = (pokemon: PokemonType) => {
-    setSelectedTeam((prevSelectedTeam: PokemonType[]) =>
+  const handleRemoveFromSelectedTeam = (pokemon: ISelPokeType) => {
+    setSelectedTeam((prevSelectedTeam: ISelPokeType[]) =>
       prevSelectedTeam.filter(
-        (selectedPokemon: PokemonType) => selectedPokemon.id !== pokemon.id
+        (selectedPokemon: ISelPokeType) => selectedPokemon.id !== pokemon.id
       )
     );
   };
 
-  const handleSelectOrRemove = (pokemon: PokemonType) => {
+  const removeAllPokemon = () => {
+    setSelectedTeam([]);
+  };
+
+  const handleSelectOrRemove = (pokemon: ISelPokeType) => {
     if (
       selectedTeam.some(
-        (selectedPokemon: PokemonType) => selectedPokemon.id === pokemon.id
+        (selectedPokemon: ISelPokeType) => selectedPokemon.id === pokemon.id
       )
     ) {
       handleRemoveFromSelectedTeam(pokemon);
@@ -45,6 +49,7 @@ export const useSelectedTeam = () => {
     selectedTeam,
     setSelectedTeam,
     handleSelectOrRemove,
+    removeAllPokemon,
     isReadyToBattle,
   };
 };
