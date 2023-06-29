@@ -22,6 +22,10 @@ const PokemonStadium = () => {
   const [error, setError] = useState("");
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
+  const [isLunging, setIsLunging] = useState(false);
+  const [isCompLunging, setIsCompLunging] = useState(false);
+  const [isTkDmg, setIsTkDmg] = useState(false);
+  const [isCompTkDmg, setIsCompTkDmg] = useState(false);
 
   const isPostedRef = useRef(isPosted);
 
@@ -79,10 +83,21 @@ const PokemonStadium = () => {
               gameState.currentPlayer
             );
 
+            const aniDelay = 1500;
+            const startDelay = 200;
+            setIsCompLunging(true);
+            setTimeout(() => {
+              setIsTkDmg(true);
+            }, startDelay);
+
             const response = await fetchGameState(gameState.id);
             const updatedGameState = response.data;
 
             setGameState(updatedGameState);
+            setTimeout(() => {
+              setIsCompLunging(false);
+              setIsTkDmg(false);
+            }, aniDelay);
           } catch (error) {
             setError("Failed to perform computer attack");
           }
@@ -113,14 +128,6 @@ const PokemonStadium = () => {
     (pokemon) => pokemon.isInBattle && pokemon.isFainted
   );
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (error) {
-    return <ErrorScreen message={error} />;
-  }
-
   const handleGameFinishedClose = async () => {
     try {
       if (gameState && gameState.id) {
@@ -137,6 +144,14 @@ const PokemonStadium = () => {
     }
   };
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return <ErrorScreen message={error} />;
+  }
+
   return (
     <div>
       {gameState && (
@@ -144,16 +159,20 @@ const PokemonStadium = () => {
           pokeData={gameState}
           isPlayerTurn={isPlayerTurn}
           isSwitchMenuOpen={shouldOpenSwitchMenu || false}
+          setIsLunging={setIsLunging}
+          setIsCompTkDmg={setIsCompTkDmg}
         >
           <SelectedBattlePokemon
             pokeData={gameState.computerPokemon}
-            isLunging={false}
+            isLunging={isCompLunging}
             isComputer={true}
+            isCompTkDmg={isCompTkDmg}
           />
 
           <SelectedBattlePokemon
             pokeData={gameState.playerPokemon}
-            isLunging={false}
+            isLunging={isLunging}
+            isTkDmg={isTkDmg}
           />
         </GameContainer>
       )}

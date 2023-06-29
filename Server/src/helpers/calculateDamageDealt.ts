@@ -77,7 +77,7 @@ const calculateDamageDealt = (
     damage *= 1.25;
   }
 
-  return +damage;
+  return Math.floor(+damage);
 };
 
 export default calculateDamageDealt;

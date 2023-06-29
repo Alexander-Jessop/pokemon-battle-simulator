@@ -144,7 +144,7 @@ export const pokemonAttack = async (req: Request, res: Response) => {
     const getHpStat = defendingPokemon.stats.find(
       (stat: IStat) => stat.stat.name === "hp"
     );
-    const opponentPokemonHP = getHpStat ? getHpStat.base_stat : 0;
+    const defendingPokemonHP = getHpStat ? getHpStat.base_stat : 0;
 
     const moveData = await fetchMoveDetails(moveUrl);
     const damage = calculateDamageDealt(
@@ -155,7 +155,8 @@ export const pokemonAttack = async (req: Request, res: Response) => {
 
     defendingPokemon.damage += damage;
 
-    if (defendingPokemon.damage >= opponentPokemonHP) {
+    if (defendingPokemon.damage >= defendingPokemonHP) {
+      defendingPokemon.damage = defendingPokemonHP;
       defendingPokemon.isFainted = true;
     }
 
@@ -233,7 +234,6 @@ export const switchComputerPokemon = async (req: Request, res: Response) => {
     const newActivePokemonIndex = activePokemonIndex + 1;
 
     if (newActivePokemonIndex >= battle.computerPokemon.length) {
-      // Return the currently active Pokemon if there is no Pokemon to switch to
       return res.status(200).json(battle);
     }
 

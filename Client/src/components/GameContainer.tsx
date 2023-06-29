@@ -1,4 +1,10 @@
-import { ReactNode, useState, useEffect } from "react";
+import {
+  ReactNode,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import PokemonAttacks from "../components/PokemonAttacks";
 import { IBattleData } from "../types/ApiType";
 import SwitchMenu from "./SwitchMenu";
@@ -8,6 +14,8 @@ interface GameContainerProps {
   pokeData: IBattleData;
   isPlayerTurn: boolean;
   isSwitchMenuOpen: boolean;
+  setIsLunging: Dispatch<SetStateAction<boolean>>;
+  setIsCompTkDmg: Dispatch<SetStateAction<boolean>>;
 }
 
 const GameContainer = ({
@@ -15,11 +23,15 @@ const GameContainer = ({
   pokeData,
   isPlayerTurn,
   isSwitchMenuOpen: propSwitchMenuOpen,
+  setIsLunging,
+  setIsCompTkDmg,
 }: GameContainerProps) => {
   const [isSwitchMenuOpen, setIsSwitchMenuOpen] = useState(propSwitchMenuOpen);
 
   useEffect(() => {
-    setIsSwitchMenuOpen(propSwitchMenuOpen);
+    setTimeout(() => {
+      setIsSwitchMenuOpen(propSwitchMenuOpen);
+    }, 1800);
   }, [propSwitchMenuOpen]);
 
   const toggleSwitchMenu = () => {
@@ -40,7 +52,12 @@ const GameContainer = ({
         {isSwitchMenuOpen && (
           <SwitchMenu pokeData={pokeData} toggleMenu={toggleSwitchMenu} />
         )}
-        <PokemonAttacks pokeData={pokeData} isPlayerTurn={isPlayerTurn} />
+        <PokemonAttacks
+          pokeData={pokeData}
+          isPlayerTurn={isPlayerTurn}
+          setIsLunging={setIsLunging}
+          setIsCompTkDmg={setIsCompTkDmg}
+        />
         <button
           onClick={toggleSwitchMenu}
           className="m-2 min-w-[10rem] rounded-lg bg-primary-200 p-2

@@ -39,9 +39,10 @@ export const usePagination = (
   };
 
   const handleItemsPerPageChange = (newLimit: number) => {
-    if (newLimit >= 1) {
-      setCurrentLimit(newLimit);
-    }
+    currentPage > totalPages
+      ? setCurrentPage(totalPages)
+      : setCurrentPage(currentPage);
+    setCurrentLimit(newLimit);
   };
 
   const handleGenerationChange = (generation: number) => {

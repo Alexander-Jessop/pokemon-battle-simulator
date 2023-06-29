@@ -5,13 +5,16 @@ interface SelectedBattlePokemonProps {
   isLunging?: boolean;
   isComputerLunging?: boolean;
   isComputer?: boolean;
+  isTkDmg?: boolean;
+  isCompTkDmg?: boolean;
 }
 
 const SelectedBattlePokemon = ({
   pokeData,
-  isLunging = false,
-  isComputerLunging = false,
+  isLunging,
   isComputer,
+  isTkDmg,
+  isCompTkDmg,
 }: SelectedBattlePokemonProps) => {
   const filteredPokemon = pokeData.filter((pokemon) => pokemon.isInBattle);
 
@@ -57,8 +60,8 @@ const SelectedBattlePokemon = ({
                   src={pokemon.sprites.front_default}
                   alt={pokemon.name}
                   className={`h-48 w-48 ${
-                    isLunging || isComputerLunging ? "animate-lunge-right" : ""
-                  }`}
+                    isLunging ? "animate-lunge-left" : ""
+                  } ${isCompTkDmg ? "animate-blink" : ""}`}
                 />
               </div>
             )}
@@ -68,8 +71,8 @@ const SelectedBattlePokemon = ({
                   src={pokemon.sprites.back_default}
                   alt={pokemon.name}
                   className={`h-48 w-48 ${
-                    isLunging || isComputerLunging ? "animate-lunge-right" : ""
-                  }`}
+                    isLunging ? "animate-lunge-right" : ""
+                  } ${isTkDmg ? "animate-blink" : ""}`}
                 />
                 <div className="ml-2 flex items-center">
                   <div

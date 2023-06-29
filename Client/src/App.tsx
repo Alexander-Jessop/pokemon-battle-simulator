@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import LandingPage from "./pages/LandingPage";
 import SelectPokemonPage from "./pages/SelectPokemonPage";
-// import BattlePage from "./pages/BattlePage";
 import LoginPage from "./pages/LoginPage";
 import PokemonStadium from "./pages/PokemonStadium";
 
