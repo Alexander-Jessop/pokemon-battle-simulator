@@ -4,8 +4,6 @@ interface User extends Document {
   name: string;
   email: string;
   password: string;
-  favorites: string[] | null;
-  selectedPokemon: string[] | null;
   visits: number;
   battlesPlayed: number;
   movesUsed: number;
@@ -26,14 +24,6 @@ const userSchema = new Schema<User>({
   password: {
     type: String,
     required: true,
-  },
-  favorites: {
-    type: [String],
-    default: null,
-  },
-  selectedPokemon: {
-    type: [String],
-    default: null,
   },
   visits: {
     type: Number,

@@ -62,10 +62,10 @@ const PokemonList = () => {
     : [];
 
   return (
-    <div>
+    <div className="min-h-screen">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="mt-5 text-center text-4xl font-bold">
-          Choose your Pokemon
+        <h1 className="mt-8 text-center text-4xl font-bold text-primary-400">
+          Choose Your Six Pokemon Team
         </h1>
         <div className="m-10 flex max-w-8xl flex-wrap justify-center">
           {filteredPokemonList.map((pokemon: ISelPokeType) => (

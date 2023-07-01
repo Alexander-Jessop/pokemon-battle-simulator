@@ -60,8 +60,9 @@ const GameContainer = ({
         />
         <button
           onClick={toggleSwitchMenu}
-          className="m-2 min-w-[10rem] rounded-lg bg-primary-200 p-2
-          capitalize text-white shadow"
+          className={`m-2 min-w-[10rem] rounded-lg p-2 capitalize text-white shadow
+          ${!isPlayerTurn ? "bg-gray-300" : "bg-primary-200"}`}
+          disabled={!isPlayerTurn}
         >
           switch pokemon
         </button>

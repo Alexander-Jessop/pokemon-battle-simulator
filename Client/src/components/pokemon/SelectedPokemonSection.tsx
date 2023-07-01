@@ -22,7 +22,7 @@ const SelectedPokemonSection = ({
 
   return (
     <div className="mx-auto max-w-8xl py-6">
-      <h2 className="mb-4 text-center text-2xl font-semibold">
+      <h2 className="mb-4 text-center text-2xl font-semibold text-white">
         Selected Pokemon:
       </h2>
       <PokemonGrid

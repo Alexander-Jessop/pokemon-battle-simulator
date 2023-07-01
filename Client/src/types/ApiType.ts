@@ -22,3 +22,15 @@ export interface IBattleData {
   winner?: number;
   log: ILogs[];
 }
+
+export interface IUserData {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  visits: number;
+  battlesPlayed: number;
+  movesUsed: number;
+  gamesWon: number;
+  gamesLost: number;
+}

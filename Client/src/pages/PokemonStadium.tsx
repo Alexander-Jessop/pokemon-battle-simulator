@@ -12,6 +12,7 @@ import fetchGameState from "../util/fetchGameState";
 import patchComputerSwitchPokemon from "../util/patchComputerSwitchPokemon";
 import WinnerPopUp from "../components/WinnerPopUp";
 import { deleteGameStateData } from "../util/deleteGameStateData";
+import putUserData from "../util/putUserData";
 
 const PokemonStadium = () => {
   const { gameState, setGameState } = useGameState();
@@ -40,6 +41,19 @@ const PokemonStadium = () => {
           const response = await postGameState(selectedTeam);
           setGameState(response);
           setIsPosted(true);
+
+          const userSession = localStorage.getItem("userSession");
+          if (userSession) {
+            const userData = JSON.parse(userSession);
+            const updatedBattlesPlayed = userData.battlesPlayed + 1;
+
+            userData.battlesPlayed = updatedBattlesPlayed;
+            putUserData(userData._id, {
+              battlesPlayed: updatedBattlesPlayed,
+            });
+
+            localStorage.setItem("userSession", JSON.stringify(userData));
+          }
         } catch (error) {
           setError("Failed to post game state");
         }
@@ -60,6 +74,26 @@ const PokemonStadium = () => {
 
   useEffect(() => {
     if (gameState?.status === "finished") {
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const userData = userSession ? JSON.parse(userSession) : null;
+
+        if (gameState.winner === "player") {
+          const updatedGamesWon = userData.gamesWon + 1;
+          userData.gamesWon = updatedGamesWon;
+          putUserData(userData._id, {
+            gamesWon: updatedGamesWon,
+          });
+        } else {
+          const updatedGamesLost = userData.gamesLost + 1;
+          userData.gamesLost = updatedGamesLost;
+          putUserData(userData._id, {
+            gamesLost: updatedGamesLost,
+          });
+        }
+
+        localStorage.setItem("userSession", JSON.stringify(userData));
+      }
       setGameFinished(true);
     }
   }, [gameState]);

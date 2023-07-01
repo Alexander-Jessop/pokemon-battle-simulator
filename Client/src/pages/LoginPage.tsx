@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SignupForm from "../components/SignupForm";
 import LoginForm from "../components/LoginForm";
+import putUserData from "../util/putUserData";
 
 interface SignupFormData {
   username: string;
@@ -19,6 +21,7 @@ const LoginPage = () => {
   const USER_LOGIN_API = "api/users/login";
   const [error, setError] = useState<string | null>(null);
   const [showSignupForm, setShowSignupForm] = useState(true);
+  const navigate = useNavigate();
 
   const handleSignupSubmit = async (formData: SignupFormData) => {
     try {
@@ -32,7 +35,17 @@ const LoginPage = () => {
 
   const handleLoginSubmit = async (formData: LoginFormData) => {
     try {
-      await axios.post(USER_LOGIN_API, formData);
+      const response = await axios.post(USER_LOGIN_API, formData);
+      localStorage.setItem("userSession", JSON.stringify(response.data.user));
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const userData = JSON.parse(userSession);
+        await putUserData(userData._id, {
+          visits: userData.visits + 1,
+        });
+      }
+
+      navigate("/");
     } catch (error) {
       setError("Failed to log in. Please try again.");
     }
@@ -43,7 +56,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex h-screen items-center justify-center bg-primary-700">
       <div
         className="min-h-2/4 flex w-1/3 flex-col items-center
         justify-center rounded-lg bg-secondary-800 p-6 shadow-lg"

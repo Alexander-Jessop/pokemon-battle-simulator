@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import bcrypt from "bcrypt";
 import UserModel from "../models/user.js";
 import { Session } from "express-session";
@@ -56,7 +57,9 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     const sessionUser: UserSession = req.session as UserSession;
     sessionUser.user = user;
 
-    return res.status(200).json({ message: "User logged in" });
+    return res
+      .status(200)
+      .json({ message: "User logged in", user: sessionUser.user });
   } catch (error) {
     console.error("Error logging in user:", error);
     return res.status(500).json({ error: "Failed to log in user" });
@@ -72,4 +75,80 @@ export const logout = (req: Request, res: Response): void => {
     res.clearCookie("connect.sid");
     return res.status(200).json({ message: "User logged out" });
   });
+};
+
+export const userData = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const userId = new Types.ObjectId(req.params.id);
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to get user data" });
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  try {
+    const userId = new Types.ObjectId(req.params.id);
+    const user = await UserModel.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to delete user" });
+  }
+};
+
+export const putUser = async (
+  req: Request,
+  res: Response
+): Promise<Response | void> => {
+  const userId = new Types.ObjectId(req.params.id);
+  const data = req.body;
+
+  try {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.name = data.name ? data.name : user.name;
+    user.email = data.email ? data.email : user.email;
+
+    if (data.password) {
+      const hashedPassword = await bcrypt.hash(data.password, 12);
+      user.password = hashedPassword;
+    } else {
+      user.password = user.password;
+    }
+
+    user.visits = data.visits ? data.visits : user.visits;
+    user.battlesPlayed = data.battlesPlayed
+      ? data.battlesPlayed
+      : user.battlesPlayed;
+    user.movesUsed = data.movesUsed ? data.movesUsed : user.movesUsed;
+    user.gamesWon = data.gamesWon ? data.gamesWon : user.gamesWon;
+    user.gamesLost = data.gamesLost ? data.gamesLost : user.gamesLost;
+
+    const updatedUser = await user.save();
+
+    return res.json(updatedUser);
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to update user" });
+  }
 };

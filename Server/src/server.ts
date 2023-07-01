@@ -11,13 +11,12 @@ dotenv.config();
 const PORT = process.env.PORT || 8080;
 const app = express();
 
+sessionConfig(app);
 app.use(express.json());
 
 app.get("/", (_req, res) => {
   res.send("Send React app here");
 });
-
-sessionConfig(app);
 
 app.use("/api/pokemon", pokemonRouter);
 

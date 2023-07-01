@@ -6,7 +6,7 @@ interface NavBarButtonProps {
   className?: string;
 }
 
-const NavBarButton = ({ path, name, className }: NavBarButtonProps) => {
+const NavBarLink = ({ path, name, className }: NavBarButtonProps) => {
   return (
     <Link to={path} className={className}>
       {name}
@@ -14,4 +14,4 @@ const NavBarButton = ({ path, name, className }: NavBarButtonProps) => {
   );
 };
 
-export default NavBarButton;
+export default NavBarLink;

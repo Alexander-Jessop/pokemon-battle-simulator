@@ -3,6 +3,7 @@ import { IBattleData } from "../types/ApiType";
 import patchPokemonAttack from "../util/patchPokemonAttack";
 import { useGameState } from "../context/GameStateContext";
 import fetchGameState from "../util/fetchGameState";
+import putUserData from "../util/putUserData";
 
 interface PropsData {
   pokeData: IBattleData;
@@ -45,6 +46,17 @@ const PokemonAttacks = ({
 
       setGameState(updatedGameState);
 
+      const userSession = localStorage.getItem("userSession");
+      if (userSession) {
+        const userData = JSON.parse(userSession);
+        const updatedMovesUsed = userData.movesUsed + 1;
+
+        userData.movesUsed = updatedMovesUsed;
+
+        await putUserData(userData._id, { movesUsed: updatedMovesUsed });
+        localStorage.setItem("userSession", JSON.stringify(userData));
+      }
+
       setTimeout(() => {
         setIsLunging(false);
         setIsCompTkDmg(false);
@@ -59,8 +71,8 @@ const PokemonAttacks = ({
       {moves.map((move) => (
         <button
           key={move.move.name}
-          className="m-2 min-w-[10rem] rounded-lg bg-primary-200 p-2
-          capitalize text-white shadow"
+          className={`m-2 min-w-[10rem] rounded-lg p-2 capitalize text-white shadow
+          ${!isPlayerTurn ? "bg-gray-300" : "bg-primary-200"}`}
           onClick={() =>
             handleAttack(
               move.move.url,
