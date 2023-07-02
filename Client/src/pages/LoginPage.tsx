@@ -37,13 +37,6 @@ const LoginPage = () => {
     try {
       const response = await axios.post(USER_LOGIN_API, formData);
       localStorage.setItem("userSession", JSON.stringify(response.data.user));
-      const userSession = localStorage.getItem("userSession");
-      if (userSession) {
-        const userData = JSON.parse(userSession);
-        await putUserData(userData._id, {
-          visits: userData.visits + 1,
-        });
-      }
 
       navigate("/");
     } catch (error) {
@@ -58,8 +51,8 @@ const LoginPage = () => {
   return (
     <div className="flex h-screen items-center justify-center bg-primary-700">
       <div
-        className="min-h-2/4 flex w-1/3 flex-col items-center
-        justify-center rounded-lg bg-secondary-800 p-6 shadow-lg"
+        className="flex min-h-[30rem] w-1/3 min-w-[30rem] max-w-[40rem] flex-col
+        items-center justify-center rounded-lg bg-secondary-800 p-6 shadow-lg"
       >
         <div className="text-center">
           <h2 className="text-4xl font-bold text-secondary-200">

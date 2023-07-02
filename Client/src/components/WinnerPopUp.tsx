@@ -5,11 +5,18 @@ import formatTimestamp from "../helpers/formatTimestamp";
 interface IGameFinishedModal {
   gameState: IBattleData;
   onClose: () => void;
+  playerName: string;
 }
 
-const GameFinishedModal = ({ gameState, onClose }: IGameFinishedModal) => {
+const GameFinishedModal = ({
+  gameState,
+  onClose,
+  playerName,
+}: IGameFinishedModal) => {
   const { log, turn, winner } = gameState;
   const turnIndex = turn - 1;
+  const winnerName =
+    winner === "player" ? (playerName ? playerName : "Player") : "Computer";
 
   return (
     <div
@@ -18,7 +25,7 @@ const GameFinishedModal = ({ gameState, onClose }: IGameFinishedModal) => {
     >
       <div className="rounded-lg bg-white p-8">
         <h2 className="mb-4 text-2xl font-bold">Game Finished</h2>
-        <h3 className="mb-2 text-xl">Winner: {winner}</h3>
+        <h3 className="mb-2 text-xl">Winner: {winnerName}</h3>
         <p className="mb-4">
           Game Started: {formatTimestamp(log[0].timestamp)}
         </p>

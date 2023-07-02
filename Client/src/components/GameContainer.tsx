@@ -39,7 +39,7 @@ const GameContainer = ({
   };
 
   return (
-    <div className="mt-60 flex w-full flex-col items-center">
+    <div className="mt-60 flex w-full flex-col items-center overflow-hidden">
       <div className="w-1/3 min-w-[40rem]">
         <div>
           <div

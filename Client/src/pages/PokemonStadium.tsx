@@ -186,6 +186,9 @@ const PokemonStadium = () => {
     return <ErrorScreen message={error} />;
   }
 
+  const userSession = localStorage.getItem("userSession");
+  const playerName = userSession ? JSON.parse(userSession).name : "";
+
   return (
     <div>
       {gameState && (
@@ -212,7 +215,11 @@ const PokemonStadium = () => {
       )}
 
       {gameFinished && gameState && (
-        <WinnerPopUp gameState={gameState} onClose={handleGameFinishedClose} />
+        <WinnerPopUp
+          gameState={gameState}
+          onClose={handleGameFinishedClose}
+          playerName={playerName}
+        />
       )}
     </div>
   );

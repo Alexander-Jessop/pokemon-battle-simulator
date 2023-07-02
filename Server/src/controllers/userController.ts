@@ -55,7 +55,22 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
     }
 
     const sessionUser: UserSession = req.session as UserSession;
-    sessionUser.user = user;
+
+    const filterdUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      visits: user.visits,
+      battlesPlayed: user.battlesPlayed,
+      movesUsed: user.movesUsed,
+      gamesWon: user.gamesWon,
+      gamesLost: user.gamesLost,
+    };
+
+    sessionUser.user = filterdUser;
+
+    user.visits += 1;
+    await user.save();
 
     return res
       .status(200)
@@ -118,6 +133,7 @@ export const putUser = async (
   res: Response
 ): Promise<Response | void> => {
   const userId = new Types.ObjectId(req.params.id);
+
   const data = req.body;
 
   try {
@@ -142,6 +158,7 @@ export const putUser = async (
       ? data.battlesPlayed
       : user.battlesPlayed;
     user.movesUsed = data.movesUsed ? data.movesUsed : user.movesUsed;
+
     user.gamesWon = data.gamesWon ? data.gamesWon : user.gamesWon;
     user.gamesLost = data.gamesLost ? data.gamesLost : user.gamesLost;
 
