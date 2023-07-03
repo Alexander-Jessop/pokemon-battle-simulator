@@ -15,10 +15,8 @@ const app = express();
 sessionConfig(app);
 app.use(express.json());
 
-const clientDistPath = path.resolve(
-  process.cwd(),
-  "../../../Pokemon-Battle-Simulator/Client/dist"
-);
+const clientDistPath = path.resolve(process.cwd(), "Client/dist");
+
 app.use(express.static(clientDistPath));
 
 app.use("/api/pokemon", pokemonRouter);
