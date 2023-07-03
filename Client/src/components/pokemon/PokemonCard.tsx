@@ -38,8 +38,9 @@ const PokemonCard = ({ pokemon, onSelect, isSelected }: Props) => {
   if (isSelected) {
     return (
       <div
-        className="min-w-[25rem] overflow-hidden rounded-lg bg-primary-600
-      shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+        className="min-w-[25rem] overflow-hidden rounded-lg
+        bg-primary-600 shadow-lg transition duration-300 hover:-translate-y-1
+        hover:shadow-xl"
       >
         <div className="relative m-4 flex items-center justify-between">
           <div className="flex items-center">
