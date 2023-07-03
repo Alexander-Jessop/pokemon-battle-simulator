@@ -5,8 +5,7 @@
   "description": "A TypeScript-based backend for a Pokemon battle simulator, providing API endpoints for managing user accounts, simulating battles, and storing battle data in a MongoDB database using the Express framework.",
   "main": "server.ts",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "start": "node dist/bundle.js",
+    "start": "node dist/server.js",
     "dev": "tsc && node dist/server.js",
     "complie": "npm run clean && tsc",
     "clean": "rm -rf dist",
@@ -14,7 +13,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "prettier": "prettier --write \"src/**/*.ts\"",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "vercel-build": "echo 'vercel-build script ran successfully'"
   },
   "dependencies": {
     "axios": "^1.4.0",

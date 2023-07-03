@@ -21,16 +21,17 @@ const clientDistPath = path.resolve(
 );
 app.use(express.static(clientDistPath));
 
-app.get("/", (_req, res) => {
-  res.sendFile(path.join(clientDistPath, "index.html"));
-});
-
 app.use("/api/pokemon", pokemonRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/battle", battleRouter);
+app.get("/", (_req, res) => {
+  res.sendFile(path.join(clientDistPath, "index.html"));
+});
 
 connectToDatabase();
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;

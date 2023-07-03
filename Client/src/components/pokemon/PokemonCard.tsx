@@ -138,7 +138,7 @@ const PokemonCard = ({ pokemon, onSelect, isSelected }: Props) => {
 
   return (
     <div
-      className="m-4 max-h-[368px] overflow-hidden rounded-lg bg-white shadow-lg
+      className="m-4 max-h-[23rem] overflow-hidden rounded-lg bg-white shadow-lg
       transition
     duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
