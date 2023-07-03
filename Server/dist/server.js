@@ -11,7 +11,7 @@ var PORT = process.env.PORT || 8080;
 var app = express();
 sessionConfig(app);
 app.use(express.json());
-var clientDistPath = path.resolve(process.cwd(), "../../Pokemon-Battle-Simulator/Client/dist");
+var clientDistPath = path.resolve(process.cwd(), "../dist/front-end");
 app.use(express.static(clientDistPath));
 app.use("/api/pokemon", pokemonRouter);
 app.use("/api/users", userRoutes);

@@ -15,10 +15,7 @@ const app = express();
 sessionConfig(app);
 app.use(express.json());
 
-const clientDistPath = path.resolve(
-  process.cwd(),
-  "../../Pokemon-Battle-Simulator/Client/dist"
-);
+const clientDistPath = path.resolve(process.cwd(), "../dist/front-end");
 
 app.use(express.static(clientDistPath));
 
