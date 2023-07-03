@@ -45,7 +45,7 @@ const PokemonStadium = () => {
           const userSession = localStorage.getItem("userSession");
           if (userSession) {
             const userData = JSON.parse(userSession);
-            const updatedBattlesPlayed = userData.battlesPlayed + 1;
+            const updatedBattlesPlayed = (userData.battlesPlayed || 0) + 1;
 
             userData.battlesPlayed = updatedBattlesPlayed;
             putUserData(userData._id, {
@@ -79,13 +79,13 @@ const PokemonStadium = () => {
         const userData = userSession ? JSON.parse(userSession) : null;
 
         if (gameState.winner === "player") {
-          const updatedGamesWon = userData.gamesWon + 1;
+          const updatedGamesWon = (userData.gamesWon || 0) + 1;
           userData.gamesWon = updatedGamesWon;
           putUserData(userData._id, {
             gamesWon: updatedGamesWon,
           });
-        } else {
-          const updatedGamesLost = userData.gamesLost + 1;
+        } else if (gameState.winner === "computer") {
+          const updatedGamesLost = (userData.gamesLost || 0) + 1;
           userData.gamesLost = updatedGamesLost;
           putUserData(userData._id, {
             gamesLost: updatedGamesLost,
