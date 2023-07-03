@@ -42,6 +42,7 @@ export var getPokemon = function (req, res) { return __awaiter(void 0, void 0, v
         switch (_a.label) {
             case 0:
                 POKEMON_API = "https://pokeapi.co/api/v2/pokemon/";
+                console.log("req.body", req.body);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);

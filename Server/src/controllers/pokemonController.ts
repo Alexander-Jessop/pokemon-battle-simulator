@@ -9,6 +9,8 @@ import { ISelectPoke, IPokemonInfo } from "../types/pokeTypes.js";
 export const getPokemon = async (req: Request, res: Response) => {
   const POKEMON_API = "https://pokeapi.co/api/v2/pokemon/";
 
+  console.log("req.body", req.body);
+
   try {
     const identifiers: string[] | number[] = req.body.identifiers;
 

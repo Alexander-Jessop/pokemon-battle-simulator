@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsc && node dist/server.js",
-    "complie": "npm run clean && tsc",
+    "compile": "npm run clean && tsc",
     "clean": "rm -rf dist",
     "lint": "eslint src --ext .ts",
     "test": "jest",
