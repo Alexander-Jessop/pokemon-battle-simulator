@@ -17,8 +17,6 @@ lerna-debug.log*
 *.sw?
 
 # Build artifacts
-/dist/
-/dist-ssr/
 /.cache/
 /.npm/
 /.nuxt/
@@ -37,7 +35,6 @@ node_modules
 
 # Generated files
 coverage/
-dist/
 tmp/
 *.pid
 *.seed
