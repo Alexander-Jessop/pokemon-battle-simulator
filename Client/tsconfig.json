@@ -31,7 +31,8 @@
     "vite.config.ts",
     "postcss.config.js",
     "jest.config.js",
-    "src/context"
+    "src/context",
+    "vercel.json"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
