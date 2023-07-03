@@ -76,29 +76,33 @@ const PokemonStadium = () => {
 
   useEffect(() => {
     if (gameState?.status === "finished" && !finishedGameDataPost) {
-      const userSession = localStorage.getItem("userSession");
-      if (userSession) {
-        const userData = userSession ? JSON.parse(userSession) : null;
-
-        if (gameState.winner === "player") {
-          const updatedGamesWon = (userData.gamesWon || 0) + 1;
-          userData.gamesWon = updatedGamesWon;
-          putUserData(userData._id, {
-            gamesWon: updatedGamesWon,
-          });
-        } else if (gameState.winner === "computer") {
-          const updatedGamesLost = (userData.gamesLost || 0) + 1;
-          userData.gamesLost = updatedGamesLost;
-          putUserData(userData._id, {
-            gamesLost: updatedGamesLost,
-          });
-        }
-        localStorage.setItem("userSession", JSON.stringify(userData));
+      const fetchData = async () => {
+        const userSession = localStorage.getItem("userSession");
         setFinishedGameDataPost(true);
-      }
-      setGameFinished(true);
+        if (userSession) {
+          const userData = userSession ? JSON.parse(userSession) : null;
+
+          if (gameState.winner === "player") {
+            const updatedGamesWon = (userData.gamesWon || 0) + 1;
+            userData.gamesWon = updatedGamesWon;
+            await putUserData(userData._id, {
+              gamesWon: updatedGamesWon,
+            });
+          } else if (gameState.winner === "computer") {
+            const updatedGamesLost = (userData.gamesLost || 0) + 1;
+            userData.gamesLost = updatedGamesLost;
+            await putUserData(userData._id, {
+              gamesLost: updatedGamesLost,
+            });
+          }
+          localStorage.setItem("userSession", JSON.stringify(userData));
+        }
+        setGameFinished(true);
+      };
+
+      fetchData();
     }
-  }, [gameState]);
+  }, [gameState, finishedGameDataPost]);
 
   useEffect(() => {
     const computerAttack = async () => {
