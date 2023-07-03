@@ -9,7 +9,7 @@ export default defineConfig(() => {
     plugins: [react()],
     server: {
       proxy: {
-        "/api/": "https://pokemon-battle-simulator-lake.vercel.app",
+        "/api/": "http://localhost:3000",
       },
     },
     define: {},
