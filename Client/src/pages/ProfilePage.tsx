@@ -51,6 +51,12 @@ const ProfilePage = () => {
     fetchData();
   }, [navigate]);
 
+  useEffect(() => {
+    if (userData) {
+      createChart(userData);
+    }
+  }, [userData]);
+
   const createChart = (data: IUserData) => {
     if (chartRef.current) {
       const ctx = chartRef.current.getContext("2d");
