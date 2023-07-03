@@ -10,7 +10,7 @@ import { useGameState } from "../context/GameStateContext";
 import patchPokemonAttack from "../util/patchPokemonAttack";
 import fetchGameState from "../util/fetchGameState";
 import patchComputerSwitchPokemon from "../util/patchComputerSwitchPokemon";
-import WinnerPopUp from "../components/WinnerPopUp";
+import GameFinishedModal from "../components/WinnerPopUp";
 import { deleteGameStateData } from "../util/deleteGameStateData";
 import putUserData from "../util/putUserData";
 
@@ -27,6 +27,7 @@ const PokemonStadium = () => {
   const [isCompLunging, setIsCompLunging] = useState(false);
   const [isTkDmg, setIsTkDmg] = useState(false);
   const [isCompTkDmg, setIsCompTkDmg] = useState(false);
+  const [finishedGameDataPost, setFinishedGameDataPost] = useState(false);
 
   const isPostedRef = useRef(isPosted);
 
@@ -36,6 +37,7 @@ const PokemonStadium = () => {
     } else {
       const initGameState = async () => {
         setGameFinished(false);
+        setFinishedGameDataPost(false);
         setIsLoading(true);
         try {
           const response = await postGameState(selectedTeam);
@@ -73,7 +75,7 @@ const PokemonStadium = () => {
   }, [selectedTeam, gameState, navigate]);
 
   useEffect(() => {
-    if (gameState?.status === "finished") {
+    if (gameState?.status === "finished" && !finishedGameDataPost) {
       const userSession = localStorage.getItem("userSession");
       if (userSession) {
         const userData = userSession ? JSON.parse(userSession) : null;
@@ -91,8 +93,8 @@ const PokemonStadium = () => {
             gamesLost: updatedGamesLost,
           });
         }
-
         localStorage.setItem("userSession", JSON.stringify(userData));
+        setFinishedGameDataPost(true);
       }
       setGameFinished(true);
     }
@@ -215,7 +217,7 @@ const PokemonStadium = () => {
       )}
 
       {gameFinished && gameState && (
-        <WinnerPopUp
+        <GameFinishedModal
           gameState={gameState}
           onClose={handleGameFinishedClose}
           playerName={playerName}
