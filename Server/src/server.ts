@@ -5,6 +5,7 @@ import pokemonRouter from "./routes/pokemonRoutes.js";
 import connectToDatabase from "./dB/db-connection.js";
 import userRoutes from "./routes/userRoutes.js";
 import battleRouter from "./routes/battleRoutes.js";
+import * as path from "path";
 
 dotenv.config();
 
@@ -14,12 +15,17 @@ const app = express();
 sessionConfig(app);
 app.use(express.json());
 
+const clientDistPath = path.resolve(
+  process.cwd(),
+  "../../Pokemon-battle-simulator/Client/dist"
+);
+app.use(express.static(clientDistPath));
+
 app.get("/", (_req, res) => {
-  res.send("Send React app here");
+  res.sendFile(path.join(clientDistPath, "index.html"));
 });
 
 app.use("/api/pokemon", pokemonRouter);
-
 app.use("/api/users", userRoutes);
 app.use("/api/battle", battleRouter);
 

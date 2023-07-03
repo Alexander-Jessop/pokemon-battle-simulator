@@ -1,4 +1,3 @@
-import React from "react";
 import { IBattleData, ILogs } from "../types/ApiType";
 import formatTimestamp from "../helpers/formatTimestamp";
 

@@ -21,10 +21,10 @@ export const fetchPokemonList = async (
 
 export const fetchPokemonDetails = async (
   identifiers: string[] | number[]
-): Promise<IPokeDetails> => {
+): Promise<IPokeDetails[]> => {
   const POKEMON_DETAILS_API = "/api/pokemon/pokemon-data";
   try {
-    const response: AxiosResponse<IPokeDetails> = await axios.post(
+    const response: AxiosResponse<IPokeDetails[]> = await axios.post(
       POKEMON_DETAILS_API,
       {
         identifiers: identifiers,

@@ -5,7 +5,8 @@
   "description": "A TypeScript-based backend for a Pokemon battle simulator, providing API endpoints for managing user accounts, simulating battles, and storing battle data in a MongoDB database using the Express framework.",
   "main": "server.ts",
   "scripts": {
-    "start": "nodemon dist/server.js",
+    "build": "webpack --config webpack.config.js",
+    "start": "node dist/bundle.js",
     "dev": "tsc && node dist/server.js",
     "complie": "npm run clean && tsc",
     "clean": "rm -rf dist",
@@ -45,8 +46,12 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.0",
+    "ts-loader": "^9.4.4",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
   },
   "keywords": [
     "TypeScript",

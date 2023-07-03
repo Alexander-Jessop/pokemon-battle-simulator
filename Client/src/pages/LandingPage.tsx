@@ -4,7 +4,6 @@ import { fetchPokemonDetails } from "../util/fetchPokemonList";
 import LoadingScreen from "../components/LoadingScreen";
 import ErrorScreen from "../components/ErrorScreen";
 import FeatureBlock from "../components/FeatureBlock";
-import { IPokeDetails } from "../types/PokemonType";
 
 const LandingPage = () => {
   const [pokemonIds, setPokemonIds] = useState<number[]>([]);
@@ -83,7 +82,7 @@ const LandingPage = () => {
             <>
               <div className="animate-fade-in">
                 <FeatureBlock
-                  pokemon={pokemonData[0] as IPokeDetails}
+                  pokemon={pokemonData[0]}
                   title="Pokémon Adventure!"
                   description="Embark on an immersive and enchanting
                   world.Gather a powerful team of Pokémon and embark
@@ -95,7 +94,7 @@ const LandingPage = () => {
               </div>
               <div className="animate-fade-in">
                 <FeatureBlock
-                  pokemon={pokemonData[1] as IPokeDetails}
+                  pokemon={pokemonData[1]}
                   title="Solo Pokemon Battle!"
                   description="Choose your dream team of Pokémon from
                   five different generations and engage in heart-pounding
@@ -106,7 +105,7 @@ const LandingPage = () => {
               </div>
               <div className="animate-fade-in">
                 <FeatureBlock
-                  pokemon={pokemonData[2] as IPokeDetails}
+                  pokemon={pokemonData[2]}
                   title="Battle Your Friends!"
                   description="Gather your closest friends, select your
                   dream team of Pokémon from five different generations,

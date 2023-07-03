@@ -24,9 +24,7 @@ const PokemonCard = ({ pokemon, onSelect, isSelected }: Props) => {
         setShowPokedex(false);
         return;
       }
-      const fetchedPokemonDetails: IPokeDetails[] = await fetchPokemonDetails([
-        pokemon.id,
-      ]);
+      const fetchedPokemonDetails = await fetchPokemonDetails([pokemon.id]);
       setPokemonDetails(fetchedPokemonDetails[0]);
 
       setShowPokedex(true);

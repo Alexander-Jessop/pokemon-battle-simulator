@@ -19,7 +19,7 @@ export interface IBattleData {
   currentPlayer: number;
   turn: number;
   status: string;
-  winner?: number;
+  winner?: string;
   log: ILogs[];
 }
 
