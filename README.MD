@@ -34,7 +34,7 @@
 
 ## Advertisement
 
-**PLAY NOW**: https://pokemon-battle-simulator-lake.vercel.app <br>
+**PLAY NOW**: https://battle-simulator-pokemon.vercel.app<br>
 Unleash your inner Pokemon Master with the most thrilling online battle simulator! Engage in exhilarating showdowns against the mighty AI or challenge your friends to determine who truly reigns supreme. Prepare for non-stop excitement, heart-pounding strategies, and electrifying encounters in the world of Pokemon!
 
 Pick your dream team from a vast collection of Pokemon that reflects your strategic brilliance. With so many options, the possibilities are endless! <br>
