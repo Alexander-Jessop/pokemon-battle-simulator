@@ -37,7 +37,8 @@
 **PLAY NOW**: https://pokemon-battle-simulator-lake.vercel.app <br>
 Unleash your inner Pokemon Master with the most thrilling online battle simulator! Engage in exhilarating showdowns against the mighty AI or challenge your friends to determine who truly reigns supreme. Prepare for non-stop excitement, heart-pounding strategies, and electrifying encounters in the world of Pokemon!
 
-Pick your dream team from a vast collection of Pokemon that reflects your strategic brilliance. With so many options, the possibilities are endless!
+Pick your dream team from a vast collection of Pokemon that reflects your strategic brilliance. With so many options, the possibilities are endless! <br>
+[Back to Table of Contents](#table-of-contents)
 
 ---
 
@@ -45,7 +46,8 @@ Pick your dream team from a vast collection of Pokemon that reflects your strate
 
 ## Description
 
-The project is a Full-Stack applicaiton that combines TypeScript with Express and integrates the pokeapi.co API to create a Battling Pokémon platform. TypeScript ensures reliable code while Express simplifies API development. By leveraging pokeapi.co, we access vast Pokémon-related data, offering a direct and efficient experience. Additionally, our Express server enables personalized profiles for tracking battle stats and saving favorite Pokémon.
+The project is a Full-Stack applicaiton that combines TypeScript with Express and integrates the pokeapi.co API to create a Battling Pokémon platform. TypeScript ensures reliable code while Express simplifies API development. By leveraging pokeapi.co, we access vast Pokémon-related data, offering a direct and efficient experience. Additionally, our Express server enables personalized profiles for tracking battle stats and saving favorite Pokémon. <br>
+[Back to Table of Contents](#table-of-contents)
 
 ---
 
@@ -71,6 +73,8 @@ Run the following command to install the dependencies within the Client and Serv
 npm install
 ```
 
+[Back to Table of Contents](#table-of-contents)
+
 ---
 
 ---
@@ -90,6 +94,8 @@ npm run dev
 ```sh
 npm run dev
 ```
+
+[Back to Table of Contents](#table-of-contents)
 
 ---
 
@@ -328,7 +334,8 @@ Returns a 200 status code and a message confirming user deleted.
 Error Responses:
 If user not found, will return a 404 status code and an error message that the user does not exist.
 
-On Failure, will return a 500 status code and an error message that it failed to fetch the user.
+On Failure, will return a 500 status code and an error message that it failed to fetch the user. <br>
+[Back to Table of Contents](#table-of-contents)
 
 ### Pokemon
 
@@ -453,7 +460,8 @@ Will return a 200 status code and the Pokemon details.
 ```
 
 Error Responses:
-On Failure, will return a 500 status code and an error message that it failed.
+On Failure, will return a 500 status code and an error message that it failed. <br>
+[Back to Table of Contents](#table-of-contents)
 
 ### Battle
 
@@ -668,7 +676,8 @@ If battle not found, will return a 404 status code and an error message that the
 
 If Pokemon not found, will return a 404 status code and an error message that the Pokemon does not exist.
 
-On Failure, will return a 500 status code and an error message.
+On Failure, will return a 500 status code and an error message. <br>
+[Back to Table of Contents](#table-of-contents)
 
 ---
 
