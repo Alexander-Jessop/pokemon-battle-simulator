@@ -96,8 +96,17 @@ npm run dev
 ```
 
 Testing Account: <br>
-Email: testing@test.com
-Password: test1234
+Email:
+
+```sh
+testing@test.com
+```
+
+Password:
+
+```sh
+test1234
+```
 
 [Back to Table of Contents](#table-of-contents)
 
