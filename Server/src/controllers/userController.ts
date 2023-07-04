@@ -18,7 +18,7 @@ export const signup = async (
 
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(409).json({ error: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -36,7 +36,6 @@ export const signup = async (
 
     return res.status(201).json(createdUser);
   } catch (error) {
-    console.error("Error creating user:", error);
     return res.status(500).json({ error: "Failed to create user" });
   }
 };
@@ -76,7 +75,6 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
       .status(200)
       .json({ message: "User logged in", user: sessionUser.user });
   } catch (error) {
-    console.error("Error logging in user:", error);
     return res.status(500).json({ error: "Failed to log in user" });
   }
 };
@@ -84,7 +82,6 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
 export const logout = (req: Request, res: Response): void => {
   req.session.destroy((err) => {
     if (err) {
-      console.error("Error destroying session:", err);
       return res.status(500).json({ error: "Failed to logout" });
     }
     res.clearCookie("connect.sid");
@@ -122,7 +119,7 @@ export const deleteUser = async (
       return res.status(404).json({ error: "User not found" });
     }
 
-    return res.status(200).json(user);
+    return res.status(200).json({ message: "User deleted" });
   } catch (error) {
     return res.status(500).json({ error: "Failed to delete user" });
   }
