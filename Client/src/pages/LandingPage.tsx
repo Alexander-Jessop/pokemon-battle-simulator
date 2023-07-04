@@ -9,16 +9,6 @@ const LandingPage = () => {
   const [pokemonIds, setPokemonIds] = useState<number[]>([]);
 
   useEffect(() => {
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.documentElement.style.overflow = "auto";
-      document.body.style.overflow = "auto";
-    };
-  }, []);
-
-  useEffect(() => {
     const getRandomPokemonIds = () => {
       const ids: number[] = [];
       while (ids.length < 4) {
